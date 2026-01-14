@@ -1,0 +1,355 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --monitor-bezel: #2c2c2c;
+  --terminal-bg: #0c0c0c;
+  --terminal-green: #00ff41;
+  --mac-bg: #e1e1e1;
+  --mac-border: #9b9b9b;
+  --mac-shadow: rgba(0, 0, 0, 0.2);
+  --header-height: 25px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #111;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Monitor Frame */
+.monitor-overlay {
+  position: relative;
+  width: 90vw;
+  height: 90vh;
+  background: var(--monitor-bezel);
+  border-radius: 40px;
+  padding: 30px;
+  box-shadow:
+    inset 0 0 50px rgba(0, 0, 0, 0.8),
+    0 50px 100px rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.monitor-overlay::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+      rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg,
+      rgba(255, 0, 0, 0.03),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.03));
+  background-size: 100% 4px, 3px 100%;
+  border-radius: 40px;
+  opacity: 0.3;
+}
+
+@keyframes flicker {
+  0% {
+    opacity: 0.99;
+  }
+
+  5% {
+    opacity: 0.97;
+  }
+
+  10% {
+    opacity: 0.99;
+  }
+
+  15% {
+    opacity: 0.98;
+  }
+
+  20% {
+    opacity: 0.99;
+  }
+
+  /* Subtle flicker */
+  100% {
+    opacity: 1;
+  }
+}
+
+.screen {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
+  animation: flicker 0.1s infinite;
+}
+
+/* CRT Curve Effect Overlay */
+.screen::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+  z-index: 2000;
+}
+
+/* CRT Scanline & Grain Effect */
+.screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 1000;
+  background-size: 100% 2px, 3px 100%;
+  pointer-events: none;
+}
+
+/* Terminal */
+.terminal {
+  width: 100%;
+  height: 100%;
+  background: var(--terminal-bg);
+  color: var(--terminal-green);
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-content {
+  flex-grow: 1;
+  white-space: pre-wrap;
+}
+
+#loading-container {
+  margin-top: 20px;
+}
+
+#loading-bar-wrapper {
+  width: 300px;
+  height: 20px;
+  border: 2px solid var(--terminal-green);
+  padding: 2px;
+}
+
+#loading-bar {
+  width: 0%;
+  height: 100%;
+  background: var(--terminal-green);
+}
+
+#loading-percentage {
+  margin-top: 5px;
+}
+
+/* Desktop */
+.desktop {
+  width: 100%;
+  height: 100%;
+  background: #4ea898;
+  /* Teal from reference */
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Top Bar */
+.top-bar {
+  height: var(--header-height);
+  background: #fdfd96;
+  /* Pale yellow from reference */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  border-bottom: 2px solid #000;
+  font-size: 13px;
+  z-index: 100;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+}
+
+.top-bar-left {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.apple-icon {
+  font-size: 16px;
+}
+
+/* Icon Grid (Moved to right) */
+.icon-grid {
+  position: absolute;
+  top: 40px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 0;
+  z-index: 50;
+}
+
+.icon {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  text-align: center;
+}
+
+.icon img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  margin-bottom: 5px;
+  /* Add a shadow or border if needed, but the images usually have it */
+}
+
+.icon span {
+  font-size: 12px;
+  color: #000;
+  font-weight: 600;
+  padding: 2px 4px;
+}
+
+/* Bottom Dock */
+.dock {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #000;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 15px;
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dock-item {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dock-item:hover {
+  transform: scale(1.2) translateY(-10px);
+}
+
+/* Windows */
+.window {
+  position: absolute;
+  background: #fff;
+  border: 2px solid #000;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
+  min-width: 350px;
+  min-height: 250px;
+  z-index: 10;
+}
+
+.window-header {
+  height: 28px;
+  background: #fff;
+  border-bottom: 2px solid #000;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  cursor: move;
+}
+
+.window-controls {
+  display: flex;
+  gap: 8px;
+  margin-right: 15px;
+}
+
+.control {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close::after {
+  content: "×";
+}
+
+.window-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #000;
+  text-transform: uppercase;
+  flex-grow: 1;
+  text-align: center;
+}
+
+
+.window-content {
+  padding: 15px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Animations */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.cursor {
+  display: inline-block;
+  width: 10px;
+  height: 20px;
+  background: var(--terminal-green);
+  animation: blink 1s infinite;
+  vertical-align: middle;
+}

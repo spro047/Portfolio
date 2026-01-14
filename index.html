@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Retro macOS Portfolio</title>
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+
+<body>
+  <!-- CRT Monitor Frame -->
+  <div id="monitor" class="monitor-overlay">
+    <div id="screen" class="screen">
+      <!-- Boot Terminal -->
+      <div id="boot-terminal" class="terminal">
+        <div id="terminal-content" class="terminal-content"></div>
+        <div id="loading-container" class="loading-container hidden">
+          <div id="loading-bar-wrapper">
+            <div id="loading-bar"></div>
+          </div>
+          <div id="loading-percentage">0%</div>
+        </div>
+      </div>
+
+      <!-- Desktop Environment (Initially Hidden) -->
+      <div id="desktop" class="desktop hidden">
+        <div class="top-bar">
+          <div class="top-bar-left">
+            <span class="apple-icon"></span>
+            <span class="menu-item active">Finder</span>
+            <span class="menu-item">File</span>
+            <span class="menu-item">Edit</span>
+            <span class="menu-item">View</span>
+            <span class="menu-item">Go</span>
+            <span class="menu-item">Window</span>
+            <span class="menu-item">Help</span>
+          </div>
+          <div class="top-bar-right">
+            <span id="current-time">00:00</span>
+          </div>
+        </div>
+
+        <div id="desktop-icons" class="icon-grid">
+          <div class="icon" id="this-pc" data-label="This PC">
+            <img src="./img/ThisPC_img.jpg" alt="This PC" />
+            <span>This PC</span>
+          </div>
+          <div class="icon" id="resume" data-label="Resume">
+            <img src="./img/Resume_img.jpg" alt="Document" />
+            <span>Resume</span>
+          </div>
+          <div class="icon" id="research" data-label="Research">
+            <img src="./img/Componets_img.jpg" alt="Microscope" />
+            <span>Research</span>
+          </div>
+          <div class="icon trash" id="trash" data-label="Trash">
+            <img src="./img/Trashbin_img.jpg" alt="Recycle Bin" />
+            <span>Trash</span>
+          </div>
+        </div>
+
+        <!-- Bottom Dock -->
+        <div class="dock">
+          <img class="dock-item" src="./img/f7fe82100835994a5ee046874dc00c87.jpg" id="dock-github" alt="GitHub"
+            title="GitHub" />
+          <img class="dock-item" src="./img/Mouse_img.jpg" alt="Mouse Settings" title="Mouse Settings" />
+          <img class="dock-item" src="./img/Trashbin_img.jpg" alt="Trash" title="Trash" />
+        </div>
+
+        <!-- Window Manager Container -->
+        <div id="window-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>

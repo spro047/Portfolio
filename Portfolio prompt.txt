@@ -1,0 +1,23 @@
+Build me a a portfolio , u have to Follow some Steps :
+1)when u open my webpage , it should look look like a a Monitor screen , show that the the system is booting , 
+	1)it should look like a mac termimal CLI interface .
+	2)make one Loading bar . in the terminal theam and make it fill up till 100% taking up to 5 sec to load 
+	
+2)i want a Animation of a Boot menu loading , and after it finishes booting , the loading bar is at 100% ,then the page should transition to a Desktop .
+
+3)the desktop images show be intractive , there should multiple icons on it like:
+	1)This PC icon ---> should show how to navigate through my portflio.
+	2)Document icon  ---> Should show my Resume
+	3)Github icon  ---> Should redirect to my Git hub profile --> https://github.com/spro047?tab=repositories
+	4)recycle bin icon  ---> Does ntg
+	5)microscope icon  ---> should show all my Research papers .
+	6)All should be the icons of the MacOS 
+4)over all project shcope should :- my portfolio should look and work like mini macOS
+5) follow the referance images that are being provided, dont recreate the images i uploaded , use onlt for referance , referance images are in the img folder.
+6)ill provide u all the required Docs , one by one , u will have to place them in the Theam of the , till then u add the functionallity of opning of small window on a desktop screen  , Display "Content Will be added here "
+
+
+Technology 
+type script, any css frame work that will work the best to create this based on the referacnces 
+ , node.js etc 
+use my local storage for now 
