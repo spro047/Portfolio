@@ -207,13 +207,15 @@ body {
   font-size: 16px;
 }
 
-/* Icon Grid (Moved to right) */
+/* Icon Grid (Moved to Bottom) */
 .icon-grid {
   position: absolute;
-  top: 40px;
-  right: 20px;
+  bottom: 100px;
+  /* Above the dock */
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 30px;
   padding: 0;
   z-index: 50;
@@ -233,13 +235,12 @@ body {
   height: 54px;
   object-fit: contain;
   margin-bottom: 5px;
-  /* Add a shadow or border if needed, but the images usually have it */
 }
 
 .icon span {
-  font-size: 12px;
+  font-size: 11px;
   color: #000;
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 4px;
 }
 
@@ -249,26 +250,27 @@ body {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.82);
   border: 2px solid #000;
-  height: 60px;
+  height: 64px;
   display: flex;
   align-items: center;
   padding: 0 20px;
-  gap: 15px;
-  border-radius: 10px;
+  gap: 20px;
+  border-radius: 12px;
   box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  z-index: 100;
 }
 
 .dock-item {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   cursor: pointer;
   transition: transform 0.2s;
 }
 
 .dock-item:hover {
-  transform: scale(1.2) translateY(-10px);
+  transform: scale(1.3) translateY(-15px);
 }
 
 /* Windows */
@@ -276,18 +278,19 @@ body {
   position: absolute;
   background: #fff;
   border: 2px solid #000;
-  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
   min-width: 350px;
   min-height: 250px;
   z-index: 10;
 }
 
 .window-header {
-  height: 28px;
+  height: 30px;
   background: #fff;
   border-bottom: 2px solid #000;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 10px;
   cursor: move;
 }
@@ -295,7 +298,6 @@ body {
 .window-controls {
   display: flex;
   gap: 8px;
-  margin-right: 15px;
 }
 
 .control {
@@ -310,6 +312,11 @@ body {
   cursor: pointer;
 }
 
+.close {
+  background: #ff5f56;
+  /* Mac close color */
+}
+
 .close::after {
   content: "×";
 }
@@ -319,8 +326,10 @@ body {
   font-weight: 800;
   color: #000;
   text-transform: uppercase;
-  flex-grow: 1;
-  text-align: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 

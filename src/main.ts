@@ -11,7 +11,7 @@ const currentTime = document.getElementById('current-time');
 
 // Boot Sequence Configuration
 const bootMessages = [
-    "Initializing Apple Mach Kernel...",
+    "Initializing NUKE Kernel...",
     "Powering on system components...",
     "CPU: 1.2GHz PowerPC G3 checked.",
     "RAM: 512MB SDRAM checked.",
@@ -76,7 +76,15 @@ function transitionToDesktop() {
 function updateClock() {
     if (currentTime) {
         const now = new Date();
-        currentTime.textContent = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const day = days[now.getDay()];
+        const date = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        // Mock battery for aesthetic
+        const battery = "98%";
+
+        currentTime.textContent = `${day} ${date} ${time} [${battery} ⚡]`;
     }
 }
 
@@ -91,12 +99,12 @@ function createWindow(title: string, content: string) {
 
     win.innerHTML = `
     <div class="window-header">
+      <div class="window-title">${title}</div>
       <div class="window-controls">
-        <div class="control close" onclick="this.closest('.window').remove()"></div>
         <div class="control minimize"></div>
         <div class="control maximize"></div>
+        <div class="control close" onclick="this.closest('.window').remove()"></div>
       </div>
-      <div class="window-title">${title}</div>
     </div>
     <div class="window-content">
       ${content}
