@@ -138,6 +138,83 @@ function createWindow(title: string, content: string) {
     windowContainer!.appendChild(win);
 }
 
+// Wallpaper Logic
+function setDesktopWallpaper(url: string) {
+    if (desktop) {
+        desktop.style.backgroundImage = `url('${url}')`;
+        // Save to local storage
+        localStorage.setItem('desktop-wallpaper', url);
+    }
+}
+
+// Load saved wallpaper on start
+const savedWallpaper = localStorage.getItem('desktop-wallpaper');
+if (savedWallpaper && desktop) {
+    desktop.style.backgroundImage = `url('${savedWallpaper}')`;
+}
+
+function openWallpaperFolder() {
+    const wallpapers = [
+        'wallpaper1.jpg', 'wallpaper2.jpg', 'wallpaper3.jpg',
+        'wallpaper4.jpg', 'wallpaper5.jpg', 'wallpaper6.jpg', 'wallpaper7.jpg'
+    ];
+
+    let html = '<div class="file-grid">';
+    wallpapers.forEach(wp => {
+        const path = `./img/wallpapers/${wp}`;
+        html += `
+            <div class="file-item wallpaper-item" data-path="${path}">
+                <img src="${path}" class="wallpaper-preview" />
+                <span class="file-label">${wp}</span>
+            </div>
+        `;
+    });
+    html += '</div><p style="text-align:center; font-size:10px; margin-top:10px;">Double-click an image to set as wallpaper</p>';
+
+    createWindow('Wallpaper', html);
+
+    // Add double-click listeners
+    setTimeout(() => {
+        document.querySelectorAll('.wallpaper-item').forEach(item => {
+            item.addEventListener('dblclick', () => {
+                const path = item.getAttribute('data-path');
+                if (path) setDesktopWallpaper(path);
+            });
+        });
+    }, 100);
+}
+
+function openFilesWindow() {
+    const html = `
+        <div class="file-grid">
+            <div class="file-item folder-item" id="folder-wallpaper">
+                <img src="./img/Sub_folders.jpg" alt="Folder" />
+                <span class="file-label">Wallpaper</span>
+            </div>
+            <div class="file-item folder-item">
+                <img src="./img/Sub_folders.jpg" alt="Folder" />
+                <span class="file-label">Documents</span>
+            </div>
+            <div class="file-item folder-item">
+                <img src="./img/Sub_folders.jpg" alt="Folder" />
+                <span class="file-label">Projects</span>
+            </div>
+        </div>
+    `;
+
+    createWindow('Files', html);
+
+    // Add folder click listeners
+    setTimeout(() => {
+        const wpFolder = document.getElementById('folder-wallpaper');
+        if (wpFolder) {
+            wpFolder.addEventListener('click', () => {
+                openWallpaperFolder();
+            });
+        }
+    }, 100);
+}
+
 // Icon Click Handlers (Consolidated to Dock)
 document.querySelectorAll('.dock-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -146,6 +223,11 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'dock-github') {
             window.open('https://github.com/spro047?tab=repositories', '_blank');
+            return;
+        }
+
+        if (id === 'files') {
+            openFilesWindow();
             return;
         }
 
@@ -160,6 +242,7 @@ document.querySelectorAll('.dock-item').forEach(item => {
         <p><strong>Navigation Guide:</strong></p>
         <ul style="padding-left: 20px; margin-top: 10px;">
           <li><strong>This PC:</strong> Navigate the system</li>
+          <li><strong>Files:</strong> Browse folders & change wallpapers</li>
           <li><strong>Resume:</strong> View professional background</li>
           <li><strong>GitHub:</strong> Check projects</li>
           <li><strong>Research:</strong> Scientific contributions</li>
