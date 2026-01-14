@@ -138,11 +138,16 @@ function createWindow(title: string, content: string) {
     windowContainer!.appendChild(win);
 }
 
-// Icon Click Handlers
-document.querySelectorAll('.icon').forEach(icon => {
-    icon.addEventListener('click', () => {
-        const label = icon.getAttribute('data-label');
-        const id = icon.id;
+// Icon Click Handlers (Consolidated to Dock)
+document.querySelectorAll('.dock-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const label = item.getAttribute('data-label');
+        const id = item.id;
+
+        if (id === 'dock-github') {
+            window.open('https://github.com/spro047?tab=repositories', '_blank');
+            return;
+        }
 
         if (id === 'trash') {
             createWindow('Recycle Bin', 'Empty as always...');
@@ -156,7 +161,7 @@ document.querySelectorAll('.icon').forEach(icon => {
         <ul style="padding-left: 20px; margin-top: 10px;">
           <li><strong>This PC:</strong> Navigate the system</li>
           <li><strong>Resume:</strong> View professional background</li>
-          <li><strong>GitHub (Dock):</strong> Check projects</li>
+          <li><strong>GitHub:</strong> Check projects</li>
           <li><strong>Research:</strong> Scientific contributions</li>
           <li><strong>Trash:</strong> Where bugs go</li>
         </ul>
@@ -166,14 +171,6 @@ document.querySelectorAll('.icon').forEach(icon => {
         createWindow(label || 'Window', content);
     });
 });
-
-// Dock Handlers
-const dockGithub = document.getElementById('dock-github');
-if (dockGithub) {
-    dockGithub.addEventListener('click', () => {
-        window.open('https://github.com/spro047?tab=repositories', '_blank');
-    });
-}
 
 // Start the app
 runBootSequence().then(transitionToDesktop);
