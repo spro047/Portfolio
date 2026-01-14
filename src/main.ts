@@ -48,7 +48,7 @@ async function runBootSequence() {
     loadingContainer!.classList.remove('hidden');
     let progress = 0;
     const startTime = Date.now();
-    const duration = 5000; // 5 seconds
+    const duration = 3000; // 3 seconds
 
     return new Promise<void>((resolve) => {
         const interval = setInterval(() => {
@@ -71,6 +71,20 @@ function transitionToDesktop() {
     desktop!.classList.remove('hidden');
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Auto-open This PC window
+    const thisPCContent = `
+        <p><strong>Navigation Guide:</strong></p>
+        <ul style="padding-left: 20px; margin-top: 10px;">
+          <li><strong>This PC:</strong> Navigate the system</li>
+          <li><strong>Files:</strong> Browse folders & change wallpapers</li>
+          <li><strong>Resume:</strong> View professional background</li>
+          <li><strong>GitHub:</strong> Check projects</li>
+          <li><strong>Research:</strong> Scientific contributions</li>
+          <li><strong>Trash:</strong> Where bugs go</li>
+        </ul>
+      `;
+    createWindow('This PC', thisPCContent);
 }
 
 function updateClock() {
@@ -89,13 +103,22 @@ function updateClock() {
 }
 
 // Window Management
+let highestZIndex = 1000;
+
 function createWindow(title: string, content: string) {
     const windowId = `win-${Date.now()}`;
     const win = document.createElement('div');
-    win.className = 'window';
+    win.className = 'window focusable-window';
     win.id = windowId;
-    win.style.left = '100px';
-    win.style.top = '100px';
+
+    // Random positioning on the left/center of the screen
+    // Avoiding complete overlap by adding some randomness
+    const randomTop = 50 + Math.random() * 200;
+    const randomLeft = 50 + Math.random() * 300;
+
+    win.style.top = `${randomTop}px`;
+    win.style.left = `${randomLeft}px`;
+    win.style.zIndex = (++highestZIndex).toString();
 
     win.innerHTML = `
     <div class="window-header">
@@ -111,7 +134,12 @@ function createWindow(title: string, content: string) {
     </div>
   `;
 
-    // Make draggable (Simple implementation)
+    // Click to focus logic
+    win.addEventListener('mousedown', () => {
+        win.style.zIndex = (++highestZIndex).toString();
+    });
+
+    // Make draggable
     let isDragging = false;
     let offsetX = 0;
     let offsetY = 0;
@@ -121,7 +149,7 @@ function createWindow(title: string, content: string) {
         isDragging = true;
         offsetX = e.clientX - win.offsetLeft;
         offsetY = e.clientY - win.offsetTop;
-        win.style.zIndex = '1000';
+        win.style.zIndex = (++highestZIndex).toString();
     });
 
     document.addEventListener('mousemove', (e) => {
