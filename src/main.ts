@@ -313,6 +313,78 @@ document.querySelectorAll('.dock-item').forEach(item => {
       `;
         }
 
+        if (id === 'resume') {
+            content = `
+                <div style="font-family: 'Inter', sans-serif; color: #000; line-height: 1.4;">
+                    <header style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
+                        <h1 style="font-size: 24px; margin: 0; font-weight: 800;">Shashank Shetgeri</h1>
+                        <p style="font-size: 11px; margin: 5px 0;">India • shashankshetgeri@gmail.com • +91 9480128298</p>
+                        <p style="font-size: 11px; margin: 0;">linkedin.com/in/shashank-shetgeri • github.com/spro047</p>
+                    </header>
+
+                    <section style="margin-bottom: 15px;">
+                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Education</h2>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>KLE Technological University, Dr. M. S. Sheshgiri Campus</span>
+                            <span>Expected Apr 2027</span>
+                        </div>
+                        <div style="font-size: 12px; margin-bottom: 5px;">BE in Computer Science and Engineering</div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>KLS's Shri Vasantrao Polytechnic</span>
+                            <span>Apr 2024</span>
+                        </div>
+                        <div style="font-size: 12px;">Diploma in Computer Science and Engineering</div>
+                    </section>
+
+                    <section style="margin-bottom: 15px;">
+                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Experience</h2>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>Student Intern, Eyesec Cyber Security Solutions</span>
+                            <span>Jan 2023 – July 2023</span>
+                        </div>
+                        <ul style="font-size: 11px; margin: 3px 0 8px 15px;">
+                            <li>Focused on Data Science, AIML, and Full Stack technologies.</li>
+                        </ul>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>Software Intern (Cyber Security), Eyesec</span>
+                            <span>Jan 2024 – Apr 2024</span>
+                        </div>
+                        <ul style="font-size: 11px; margin: 3px 0 0 15px;">
+                            <li>Practical exposure to threat modeling and application-level security.</li>
+                        </ul>
+                    </section>
+
+                    <section style="margin-bottom: 15px;">
+                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Projects</h2>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>Gender-Aware ADHD Detection Framework</span>
+                            <span>WiDS Datathon 2025</span>
+                        </div>
+                        <ul style="font-size: 11px; margin: 3px 0 8px 15px;">
+                            <li>Led a team of 6 to develop a dual-model ADHD prediction system using brain connectomes.</li>
+                            <li>Gender classifier (XGBoost): AUC 0.77; ADHD predictor (FLAML): AUC 0.84.</li>
+                        </ul>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                            <span>Automated XSS Vulnerability Scanner</span>
+                            <span>Cyber Security Toolkit</span>
+                        </div>
+                        <ul style="font-size: 11px; margin: 3px 0 0 15px;">
+                            <li>Developed a GUI-based tool that automates XSS detection in web applications.</li>
+                            <li>Engineered payload injection using BeautifulSoup and Requests.</li>
+                        </ul>
+                    </section>
+
+                    <section style="margin-bottom: 15px;">
+                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Technologies</h2>
+                        <p style="font-size: 11px; margin: 0;"><strong>Languages:</strong> Python, SQL, JavaScript, C, Java, HTML/CSS, PHP</p>
+                        <p style="font-size: 11px; margin: 3px 0 0 0;"><strong>Tools:</strong> XGBoost, FLAML, Pandas, NumPy, Matplotlib, Scikit-learn, Git, Bootstrap</p>
+                    </section>
+                </div>
+            `;
+            createWindow('Resume', content, 600, 650);
+            return;
+        }
+
         if (id === 'research') {
             content = `
                 <div style="font-family: 'Inter', sans-serif;">
