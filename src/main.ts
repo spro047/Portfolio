@@ -152,15 +152,35 @@ function createWindow(title: string, content: string) {
         win.style.zIndex = (++highestZIndex).toString();
     });
 
+    // Make Resizable
+    const resizer = document.createElement('div');
+    resizer.className = 'resizer';
+    win.appendChild(resizer);
+
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', (e) => {
+        isResizing = true;
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
     document.addEventListener('mousemove', (e) => {
         if (isDragging) {
             win.style.left = `${e.clientX - offsetX}px`;
             win.style.top = `${e.clientY - offsetY}px`;
+        } else if (isResizing) {
+            const width = e.clientX - win.offsetLeft;
+            const height = e.clientY - win.offsetTop;
+
+            if (width > 200) win.style.width = `${width}px`;
+            if (height > 150) win.style.height = `${height}px`;
         }
     });
 
     document.addEventListener('mouseup', () => {
         isDragging = false;
+        isResizing = false;
     });
 
     windowContainer!.appendChild(win);

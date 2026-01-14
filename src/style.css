@@ -388,6 +388,29 @@ body {
   transition: background-image 0.5s ease-in-out;
 }
 
+/* Resizing */
+.resizer {
+  width: 15px;
+  height: 15px;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+  z-index: 10;
+}
+
+.resizer::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+}
+
 /* Animations */
 @keyframes blink {
   0% {
