@@ -43,6 +43,48 @@ use my local storage for now
 2)all the Deatils of the Reseach must be Displayed in in that Pop-up window 
 3)Content -->
 
+Paper tittle ->Gender-Aware ADHD Detection Framework Combining
+XGBoost and FLAML Models: Exploring Predictive Features in
+Women Advancing Personalized ADHD Diagnosis
+
+Abstract -->A machine learning architecture is introduced to predict attention deficit hyperactivity
+disorder (ADHD) and biological sex from multimodal inputs. The problem sidesteps
+the clinical task of early ADHD detection and adds prediction of sex as a meta-feature
+to enhance robustness. The architecture is applied to demographic profiles, quantitative
+tests, and functional brain connectomes as 200 × 200 matrices. Preprocessing includes
+data harmonization, matrix symmetrization, graph-based descriptor extraction, including
+total strength, mean, and standard deviation, categorical encoding, variance thresholding, and imputation of missing values using k-nearest neighbors. Sex classification is
+performed using XGBoost with stratified cross-validation to generate probability outputs
+that enhance the ADHD model. ADHD classification is tuned using FLAML’s automatic
+hyperparameter search for XGBoost and class-weighting to address imbalance. Findings
+show that combining imaging-derived features and automated model selection yields a
+robust method of ADHD detection, underscoring the utility of multimodal data fusion in
+neuropsychiatric studies.
+Keywords: ADHD prediction; brain connectome; XGBoost; FLAML; machine learning
+
+paper Link -->https://www.mdpi.com/2813-0324/12/1/6
+
+
+
+Paper tittle ->Comparative Deep Neural Study For Stage-Wise
+Alzheimer’s Disease Detection Using Brain MRI
+
+Abstract -->Alzheimer's disease(AD) is a progressive neurological condition in
+which reliable recognition of disease stage is important for planning treatment
+and follow up. This study investigates four stages(Non, Very-Mild, Mild,
+Moderate dementia) using structural brain MRI from an ADNI-based dataset
+that is balanced across classes.A unified deep-learning pipeline is built around
+one custom CNN and 5 transfer-learning models (VGG16, ResNet50,
+DenseNet201, InceptionV3, EfficientNet-B1) all trained with consistent
+preprocessing, augmentation and stratified data splits. The custom CNN
+,VGG16 and denseNet201 reach test accuracy and macro F1-scores of 95-98%,
+whereas EfficientNet-B1 and InceptionV3 remain substantially lower. The
+results show that carefully tuned 2D CNN architectures are sufficient for
+accurate stage-wise AD classification from MRI and help indicate which model
+families are most suitable for computer-aided diagnosis in this setting.
+Keywords: Alzheimer's disease(AD), Alzheimer's disease Neuroimaging
+Initiative(ADNI) ,CNN, DenseNet201 , Early diagnosis , EfficientNet-B1 ,
+InceptionV3 ,Multi-Class Classification, ResNet50 , VGG16 .
 
 
 

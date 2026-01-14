@@ -131,18 +131,57 @@ body {
 .terminal {
   width: 100%;
   height: 100%;
-  background: var(--terminal-bg);
+  background: #000;
   color: var(--terminal-green);
   font-family: 'VT323', monospace;
-  font-size: 20px;
   padding: 40px;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  text-shadow: 0 0 8px rgba(51, 255, 51, 0.4);
 }
 
 .terminal-content {
   flex-grow: 1;
+  font-size: 1.5rem;
+  line-height: 1.2;
   white-space: pre-wrap;
+  overflow-y: hidden;
+}
+
+/* Status Tags */
+.status-tag {
+  display: inline-block;
+  min-width: 70px;
+  text-align: center;
+  margin-right: 15px;
+  font-weight: bold;
+}
+
+.status-ok {
+  color: #33ff33;
+}
+
+.status-info {
+  color: #33ccff;
+}
+
+.status-warn {
+  color: #ffcc33;
+}
+
+.terminal-line {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.ascii-logo {
+  color: #33ff33;
+  margin-bottom: 30px;
+  font-size: 11px;
+  line-height: 1.1;
+  text-shadow: 0 0 10px rgba(51, 255, 51, 0.8);
 }
 
 #loading-container {
