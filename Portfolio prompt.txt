@@ -21,3 +21,44 @@ Technology
 type script, any css frame work that will work the best to create this based on the referacnces 
  , node.js etc 
 use my local storage for now 
+
+
+
+1)ADD the Image of Files(int the img folder) that will be used as a File Explore in the project 
+2)when i click on it , it should open a pop up window containing all the sub folder - (Image is in the img folddrr , name as subfolder)
+3)there should be a sub folder that is named as Wallpaper
+4)i should be able to change the wallpaper of the desktop based on the images inside of the sub folder of Wallpaper 
+5)i should be able to see all the wallpaper , once i am inside of the subfolder
+5)i should be able click twice on the image to set is as Desktop wallpaper . 
+
+
+
+
+1) teminal speed at the start to reduce to 3 sec
+2) the thisPC popup shoud be displace when u enter the Desktop
+
+
+
+1)When i click on research paper a Bigger Pop up window should open .
+2)all the Deatils of the Reseach must be Displayed in in that Pop-up window 
+3)Content -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
