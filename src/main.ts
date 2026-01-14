@@ -105,7 +105,7 @@ function updateClock() {
 // Window Management
 let highestZIndex = 1000;
 
-function createWindow(title: string, content: string) {
+function createWindow(title: string, content: string, width?: number, height?: number) {
     const windowId = `win-${Date.now()}`;
     const win = document.createElement('div');
     win.className = 'window focusable-window';
@@ -119,6 +119,9 @@ function createWindow(title: string, content: string) {
     win.style.top = `${randomTop}px`;
     win.style.left = `${randomLeft}px`;
     win.style.zIndex = (++highestZIndex).toString();
+
+    if (width) win.style.width = `${width}px`;
+    if (height) win.style.height = `${height}px`;
 
     win.innerHTML = `
     <div class="window-header">
@@ -297,6 +300,27 @@ document.querySelectorAll('.dock-item').forEach(item => {
           <li><strong>Trash:</strong> Where bugs go</li>
         </ul>
       `;
+        }
+
+        if (id === 'research') {
+            content = `
+                <div style="font-family: 'Inter', sans-serif;">
+                    <div style="margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 15px;">
+                        <h2 style="font-size: 18px; color: #000; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Gender-Aware ADHD Detection Framework Combining XGBoost and FLAML Models</h2>
+                        <p style="font-size: 14px; color: #333; margin-bottom: 12px; line-height: 1.6;"><strong>Abstract:</strong> A machine learning architecture is introduced to predict attention deficit hyperactivity disorder (ADHD) and biological sex from multimodal inputs. The problem sidesteps the clinical task of early ADHD detection and adds prediction of sex as a meta-feature to enhance robustness. Findings show that combining imaging-derived features and automated model selection yields a robust method of ADHD detection, underscoring the utility of multimodal data fusion in neuropsychiatric studies.</p>
+                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;"><strong>Keywords:</strong> ADHD prediction; brain connectome; XGBoost; FLAML; machine learning</p>
+                        <a href="https://www.mdpi.com/2813-0324/12/1/6" target="_blank" style="display: inline-block; background: #000; color: #fff; padding: 6px 12px; text-decoration: none; font-size: 12px; font-weight: bold; border-radius: 4px;">READ PAPER →</a>
+                    </div>
+
+                    <div>
+                        <h2 style="font-size: 18px; color: #000; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Comparative Deep Neural Study For Stage-Wise Alzheimer’s Disease Detection</h2>
+                        <p style="font-size: 14px; color: #333; margin-bottom: 12px; line-height: 1.6;"><strong>Abstract:</strong> Alzheimer's disease(AD) is a progressive neurological condition in which reliable recognition of disease stage is important for planning treatment and follow up. This study investigates four stages using structural brain MRI from an ADNI-based dataset. The results show that carefully tuned 2D CNN architectures are sufficient for accurate stage-wise AD classification from MRI.</p>
+                        <p style="font-size: 13px; color: #555;"><strong>Keywords:</strong> Alzheimer's disease(AD), ADNI, CNN, DenseNet201, VGG16, Multi-Class Classification.</p>
+                    </div>
+                </div>
+            `;
+            createWindow('Research Papers', content, 650, 500);
+            return;
         }
 
         createWindow(label || 'Window', content);
