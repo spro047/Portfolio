@@ -111,17 +111,28 @@ function createWindow(title: string, content: string, width?: number, height?: n
     win.className = 'window focusable-window';
     win.id = windowId;
 
-    // Random positioning on the left/center of the screen
-    // Avoiding complete overlap by adding some randomness
-    const randomTop = 50 + Math.random() * 200;
-    const randomLeft = 50 + Math.random() * 300;
-
-    win.style.top = `${randomTop}px`;
-    win.style.left = `${randomLeft}px`;
-    win.style.zIndex = (++highestZIndex).toString();
+    const winWidth = width || 400;
+    const winHeight = height || 300;
 
     if (width) win.style.width = `${width}px`;
     if (height) win.style.height = `${height}px`;
+
+    // Center positioning on the monitor screen
+    if (monitorScreen) {
+        const screenWidth = monitorScreen.clientWidth;
+        const screenHeight = monitorScreen.clientHeight;
+
+        const centerX = (screenWidth - winWidth) / 2;
+        const centerY = (screenHeight - winHeight) / 2;
+
+        // Small random offset so multiple windows don't perfectly stack
+        const offset = (Math.random() - 0.5) * 40;
+
+        win.style.top = `${centerY + offset}px`;
+        win.style.left = `${centerX + offset}px`;
+    }
+
+    win.style.zIndex = (++highestZIndex).toString();
 
     win.innerHTML = `
     <div class="window-header">
