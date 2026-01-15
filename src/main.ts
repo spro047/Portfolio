@@ -811,6 +811,45 @@ function openFlappyBird() {
     }, 100);
 }
 
+function openMenuWindow() {
+    const dockItems = document.querySelectorAll('.dock-item');
+    let html = '<div class="menu-grid">';
+
+    dockItems.forEach(item => {
+        if (item.id === 'menu') return; // Skip the menu icon itself
+        const img = (item.querySelector('img') as HTMLImageElement).src;
+        const label = item.getAttribute('data-label');
+        const id = item.id;
+
+        html += `
+            <div class="menu-app-item" data-id="${id}">
+                <img src="${img}" />
+                <span>${label}</span>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+
+    createWindow('Applications', html, 550, 450);
+
+    // Add click listeners to launch apps from the menu
+    setTimeout(() => {
+        document.querySelectorAll('.menu-app-item').forEach(item => {
+            const element = item as HTMLElement;
+            element.addEventListener('click', () => {
+                const id = element.getAttribute('data-id');
+                const dockItem = document.getElementById(id!);
+                if (dockItem) {
+                    (dockItem as HTMLElement).click();
+                }
+                // Close the menu window
+                element.closest('.window')?.remove();
+            });
+        });
+    }, 100);
+}
+
 // Icon Click Handlers (Consolidated to Dock)
 document.querySelectorAll('.dock-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -829,6 +868,11 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'trash') {
             createWindow('Recycle Bin', 'Empty as always...');
+            return;
+        }
+
+        if (id === 'menu') {
+            openMenuWindow();
             return;
         }
 
