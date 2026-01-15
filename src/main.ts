@@ -811,10 +811,121 @@ function openFlappyBird() {
     }, 100);
 }
 
+function openCalculator() {
+    const html = `
+        <div class="calculator">
+            <div class="calc-display" id="calc-display">0</div>
+            <div class="calc-buttons">
+                <!-- Row 1: Clear and Divide -->
+                <div class="calc-btn btn-red" style="grid-column: span 3;" onclick="window.calcClear()">C</div>
+                <div class="calc-btn btn-orange" onclick="window.calcOp('/')">/</div>
+                
+                <!-- Row 2: 7, 8, 9, Multiply -->
+                <div class="calc-btn btn-grey" onclick="window.calcNum('7')">7</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('8')">8</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('9')">9</div>
+                <div class="calc-btn btn-orange" onclick="window.calcOp('*')">×</div>
+                
+                <!-- Row 3: 4, 5, 6, Subtract -->
+                <div class="calc-btn btn-grey" onclick="window.calcNum('4')">4</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('5')">5</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('6')">6</div>
+                <div class="calc-btn btn-orange" onclick="window.calcOp('-')">-</div>
+                
+                <!-- Row 4: 1, 2, 3, Add -->
+                <div class="calc-btn btn-grey" onclick="window.calcNum('1')">1</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('2')">2</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('3')">3</div>
+                <div class="calc-btn btn-orange" onclick="window.calcOp('+')">+</div>
+                
+                <!-- Row 5: 0, Dot, Equal -->
+                <div class="calc-btn btn-grey" onclick="window.calcNum('0')">0</div>
+                <div class="calc-btn btn-grey" onclick="window.calcNum('.')">.</div>
+                <div class="calc-btn btn-green" style="grid-column: span 2;" onclick="window.calcEqual()">=</div>
+            </div>
+        </div>
+    `;
+
+    createWindow('Calculator', html, 320, 480);
+
+    // Calculator Logic
+    let currentInput = '0';
+    let previousInput = '';
+    let operation: string | null = null;
+    let shouldResetScreen = false;
+
+    const updateDisplay = () => {
+        const display = document.getElementById('calc-display');
+        if (!display) return;
+
+        let displayText = '';
+        if (previousInput) {
+            displayText = previousInput + ' ' + (operation || '');
+            if (!shouldResetScreen) {
+                displayText += ' ' + currentInput;
+            }
+        } else {
+            displayText = currentInput;
+        }
+
+        display.textContent = displayText || '0';
+    };
+
+    (window as any).calcNum = (num: string) => {
+        if (currentInput === '0' || shouldResetScreen) {
+            currentInput = num;
+            shouldResetScreen = false;
+        } else {
+            currentInput += num;
+        }
+        updateDisplay();
+    };
+
+    (window as any).calcOp = (op: string) => {
+        if (operation !== null && !shouldResetScreen) {
+            (window as any).calcEqual();
+        }
+        previousInput = currentInput;
+        operation = op;
+        shouldResetScreen = true;
+        updateDisplay();
+    };
+
+    (window as any).calcClear = () => {
+        currentInput = '0';
+        previousInput = '';
+        operation = null;
+        shouldResetScreen = false;
+        updateDisplay();
+    };
+
+    (window as any).calcEqual = () => {
+        if (operation === null || shouldResetScreen) return;
+        let result: number;
+        const prev = parseFloat(previousInput);
+        const current = parseFloat(currentInput);
+
+        switch (operation) {
+            case '+': result = prev + current; break;
+            case '-': result = prev - current; break;
+            case '*': result = prev * current; break;
+            case '/': result = prev / current; break;
+            default: return;
+        }
+
+        currentInput = result.toString();
+        previousInput = '';
+        operation = null;
+        shouldResetScreen = true;
+        updateDisplay();
+    };
+}
+
 function openMenuWindow() {
     const dockItems = document.querySelectorAll('.dock-item');
     let html = '<div class="menu-grid">';
 
+    // Start with core apps from Dock
     dockItems.forEach(item => {
         if (item.id === 'menu') return; // Skip the menu icon itself
         const img = (item.querySelector('img') as HTMLImageElement).src;
@@ -829,6 +940,14 @@ function openMenuWindow() {
         `;
     });
 
+    // Add extra apps not in Dock
+    html += `
+        <div class="menu-app-item" data-id="calculator">
+            <img src="./img/Calculator_img.jpg" />
+            <span>Calculator</span>
+        </div>
+    `;
+
     html += '</div>';
 
     createWindow('Applications', html, 550, 450);
@@ -839,10 +958,16 @@ function openMenuWindow() {
             const element = item as HTMLElement;
             element.addEventListener('click', () => {
                 const id = element.getAttribute('data-id');
-                const dockItem = document.getElementById(id!);
-                if (dockItem) {
-                    (dockItem as HTMLElement).click();
+
+                if (id === 'calculator') {
+                    openCalculator();
+                } else {
+                    const dockItem = document.getElementById(id!);
+                    if (dockItem) {
+                        (dockItem as HTMLElement).click();
+                    }
                 }
+
                 // Close the menu window
                 element.closest('.window')?.remove();
             });
@@ -1029,6 +1154,65 @@ document.querySelectorAll('.dock-item').forEach(item => {
         }
 
         createWindow(label || 'Window', content);
+    });
+});
+
+// Dock Drag and Drop Logic
+const dock = document.querySelector('.dock') as HTMLElement;
+let draggedItem: HTMLElement | null = null;
+
+document.querySelectorAll('.dock-item').forEach(item => {
+    const dockItem = item as HTMLElement;
+
+    dockItem.addEventListener('dragstart', (e) => {
+        draggedItem = dockItem;
+        dockItem.classList.add('dragging');
+        if (e.dataTransfer) {
+            e.dataTransfer.effectAllowed = 'move';
+            // Set a ghost image or just let the browser handle it
+            e.dataTransfer.setData('text/plain', dockItem.id);
+        }
+    });
+
+    dockItem.addEventListener('dragend', () => {
+        draggedItem = null;
+        dockItem.classList.remove('dragging');
+        document.querySelectorAll('.dock-item').forEach(i => i.classList.remove('drag-over'));
+    });
+
+    dockItem.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
+
+        if (dockItem !== draggedItem) {
+            dockItem.classList.add('drag-over');
+        }
+    });
+
+    dockItem.addEventListener('dragleave', () => {
+        dockItem.classList.remove('drag-over');
+    });
+
+    dockItem.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dockItem.classList.remove('drag-over');
+
+        if (draggedItem && draggedItem !== dockItem) {
+            const allItems = Array.from(dock.querySelectorAll('.dock-item'));
+            const draggedIndex = allItems.indexOf(draggedItem);
+            const targetIndex = allItems.indexOf(dockItem);
+
+            if (draggedIndex < targetIndex) {
+                dockItem.after(draggedItem);
+            } else {
+                dockItem.before(draggedItem);
+            }
+
+            // Trigger a small animation reflow
+            draggedItem.style.animation = 'none';
+            draggedItem.offsetHeight; // trigger reflow
+            draggedItem.style.animation = '';
+        }
     });
 });
 
