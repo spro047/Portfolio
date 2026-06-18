@@ -1,0 +1,26 @@
+[
+  {
+    "id": "paper-1",
+    "title": "Efficient Attention Mechanisms for Transformer Models",
+    "venue": "Preprint",
+    "year": 2025,
+    "abstract": "A survey of efficient attention mechanisms including sparse attention, linear attention, and flash attention techniques for reducing the quadratic complexity of standard transformer attention.",
+    "topics": ["Deep Learning", "NLP", "Transformers"]
+  },
+  {
+    "id": "paper-2",
+    "title": "Retro Computing Interfaces in Modern Web Applications",
+    "venue": "Personal Research",
+    "year": 2025,
+    "abstract": "Exploring the intersection of nostalgic UI design patterns (classic Mac OS, MS-DOS, early Windows) with modern web technologies like CSS custom properties, Canvas API, and TypeScript.",
+    "topics": ["Human-Computer Interaction", "Web Development"]
+  },
+  {
+    "id": "paper-3",
+    "title": "TypeScript in Large-Scale Frontend Architecture",
+    "venue": "Engineering Blog",
+    "year": 2024,
+    "abstract": "Best practices for structuring large TypeScript frontend projects — module boundaries, type safety patterns, and migration strategies from JavaScript.",
+    "topics": ["TypeScript", "Software Engineering"]
+  }
+]

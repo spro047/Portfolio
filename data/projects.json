@@ -1,0 +1,32 @@
+[
+  {
+    "id": "retro-macos-portfolio",
+    "title": "Retro macOS Portfolio",
+    "description": "A web-based macOS 9 simulator portfolio with boot sequence, draggable windows, paint app, Flappy Bird, and interactive desktop experience — built entirely in vanilla TypeScript + CSS.",
+    "tech": ["TypeScript", "CSS", "HTML5", "Vite"],
+    "features": [
+      "CRT boot animation with loading bar",
+      "Draggable/stackable windows with z-index management",
+      "Paint application with color picker and brush sizes",
+      "Flappy Bird arcade game",
+      "Calculator app",
+      "Calendar with month navigation",
+      "This PC / Files explorer"
+    ],
+    "url": "https://github.com/spro047/Portfolio",
+    "year": 2025
+  },
+  {
+    "id": "project-two",
+    "title": "Research Paper Manager",
+    "description": "Academic research paper management system with topic classification, citation tracking, and reading list organization.",
+    "tech": ["React", "Node.js", "MongoDB"],
+    "features": [
+      "Paper categorization by topic",
+      "Citation graph visualization",
+      "Reading progress tracking"
+    ],
+    "url": null,
+    "year": 2024
+  }
+]
