@@ -1147,13 +1147,11 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'resume') {
             content = `
-                <div class="content-page" style="padding: 0; height: 100%;">
-                    <object data="./img/Resume.pdf" type="application/pdf" style="width: 100%; height: 100%; border: none; display: block;">
-                        <p style="padding: 20px; text-align: center;">
-                            Your browser doesn't support embedded PDFs.
-                            <a href="./img/Resume.pdf" target="_blank" style="color: #007bff;">Download Resume</a>
-                        </p>
-                    </object>
+                <div class="content-page" style="padding: 0; height: 100%; display: flex; flex-direction: column;">
+                    <div style="text-align: center; padding: 8px; background: #f5f5f5; border-bottom: 1px solid #ccc; flex-shrink: 0;">
+                        <a href="./img/Resume.pdf" target="_blank" style="color: #007bff; font-size: 13px; text-decoration: underline;">Open PDF in new tab →</a>
+                    </div>
+                    <iframe src="./img/Resume.pdf" style="width: 100%; flex: 1; border: none;"></iframe>
                 </div>
             `;
             createWindow('Resume', content, 800, 700);
