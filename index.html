@@ -56,6 +56,10 @@
             <img src="./img/Resume.png" alt="Resume" />
             <span class="tooltip">Resume</span>
           </div>
+          <div class="dock-item" id="terminal" data-label="Terminal" draggable="true">
+            <img src="./img/nuke.png" alt="Terminal" />
+            <span class="tooltip">Terminal</span>
+          </div>
           <div class="dock-item" id="research" data-label="Research" draggable="true">
             <img src="./img/microscope.png" alt="Research" />
             <span class="tooltip">Research</span>
@@ -92,6 +96,14 @@
 
         <!-- Window Manager Container -->
         <div id="window-container"></div>
+
+        <!-- Context Menu -->
+        <div id="context-menu" class="context-menu hidden">
+          <div class="context-menu-item" data-action="change-wallpaper">Change Wallpaper</div>
+          <div class="context-menu-item" data-action="refresh">Refresh</div>
+          <div class="context-menu-separator"></div>
+          <div class="context-menu-item" data-action="terminal">Open Terminal</div>
+        </div>
       </div>
     </div>
   </div>

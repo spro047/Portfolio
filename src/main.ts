@@ -103,6 +103,12 @@ function transitionToDesktop() {
     updateClock();
     setInterval(updateClock, 1000);
 
+    setupContextMenu();
+
+    if (!localStorage.getItem('boot-time')) {
+        localStorage.setItem('boot-time', Date.now().toString());
+    }
+
     // Auto-open This PC window
     const thisPCContent = `
         <div class="content-page">
@@ -125,6 +131,37 @@ function transitionToDesktop() {
         </div>
       `;
     createWindow('This PC', thisPCContent, 500, 420);
+}
+
+function setupContextMenu() {
+    const menu = document.getElementById('context-menu');
+    if (!menu) return;
+
+    document.addEventListener('contextmenu', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('.window') || target.closest('.dock') || target.closest('.top-bar')) return;
+        e.preventDefault();
+        menu.style.left = `${e.clientX}px`;
+        menu.style.top = `${e.clientY}px`;
+        menu.classList.remove('hidden');
+    });
+
+    menu.addEventListener('click', (e) => {
+        const item = (e.target as HTMLElement).closest('.context-menu-item');
+        if (!item) return;
+        const action = item.getAttribute('data-action');
+        menu.classList.add('hidden');
+        if (action === 'change-wallpaper') openWallpaperFolder();
+        else if (action === 'refresh') {
+            const screen = document.getElementById('screen');
+            screen?.classList.add('boot-anim');
+            setTimeout(() => screen?.classList.remove('boot-anim'), 500);
+        } else if (action === 'terminal') openTerminal();
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target as Node)) menu.classList.add('hidden');
+    });
 }
 
 function updateClock() {
@@ -293,6 +330,117 @@ function openWallpaperFolder() {
     }, 100);
 }
 
+function openTerminal() {
+    const termId = `term-${Date.now()}`;
+    let history: string[] = [];
+
+    const commands: Record<string, (args: string[]) => string> = {
+        help: () => [
+            'Available commands:',
+            '  help      — Show this help message',
+            '  whoami    — Display current user',
+            '  ls        — List files in current directory',
+            '  date      — Show current date and time',
+            '  echo [text] — Print the given text',
+            '  clear     — Clear the terminal screen',
+            '  neofetch  — Display system info',
+            '  uptime    — Show how long the system has been running',
+            '  uname     — Print system information',
+            '  exit      — Close the terminal'
+        ].join('\n'),
+        whoami: () => 'shashank',
+        ls: () => 'Desktop  Documents  Projects  Research  Wallpapers',
+        date: () => new Date().toLocaleString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        echo: (args) => args.join(' ') || '',
+        clear: () => { setTimeout(() => { const out = document.querySelector(`#${termId} .term-output`); if (out) out.innerHTML = ''; }, 0); return ''; },
+        neofetch: () => [
+            '         .--.            shashank@portfolio',
+            '       .\'    \'.          -------------------',
+            '      /  .--.  \\         OS: Retro macOS Portfolio v2.0',
+            '     |  /    \\  |        Host: Vercel (Serverless)',
+            '     | |      | |        Kernel: TypeScript 5.9',
+            '    \\\\ \\      / //        Shell: Web Terminal v1.0',
+            '     \\\\ \'----\' //         Resolution: 90vw x 90vh',
+            '      \\\\      //          CPU: Intel Core i9-12900K @ 5.2GHz',
+            '       \\\\    //           Memory: 64GB DDR5',
+            '        \\\\  //            Uptime: powered by ☕'
+        ].join('\n'),
+        uptime: () => {
+            const now = Date.now();
+            const bootTime = localStorage.getItem('boot-time') || now.toString();
+            const diff = Math.floor((now - parseInt(bootTime)) / 1000);
+            const h = Math.floor(diff / 3600);
+            const m = Math.floor((diff % 3600) / 60);
+            const s = diff % 60;
+            return `up ${h} hours, ${m} minutes, ${s} seconds`;
+        },
+        uname: () => 'WebTerminal 1.0 portfolio-os 2026 x86_64',
+        exit: () => { setTimeout(() => { document.getElementById(termId)?.closest('.window')?.remove(); }, 100); return 'Goodbye!'; }
+    };
+
+    const html = `
+        <div class="terminal-window" id="${termId}">
+            <div class="term-output"></div>
+            <div class="term-input-line">
+                <span class="term-prompt">shashank@portfolio:~$</span>
+                <input type="text" class="term-input" id="${termId}-input" autofocus />
+            </div>
+        </div>
+    `;
+
+    createWindow('Terminal', html, 600, 400);
+
+    const outputEl = document.querySelector(`#${termId} .term-output`) as HTMLElement;
+    const inputEl = document.getElementById(`${termId}-input`) as HTMLInputElement;
+
+    function print(text: string, className = '') {
+        const line = document.createElement('div');
+        line.className = 'term-line' + (className ? ' ' + className : '');
+        line.textContent = text;
+        outputEl?.appendChild(line);
+        outputEl?.scrollTo(0, outputEl.scrollHeight);
+    }
+
+    print('Welcome to WebTerminal v1.0');
+    print('Type "help" for available commands.');
+    print('');
+
+    function processCommand(cmd: string) {
+        const trimmed = cmd.trim();
+        if (!trimmed) return;
+        history.push(trimmed);
+
+        const parts = trimmed.split(/\s+/);
+        const commandName = parts[0].toLowerCase();
+        const args = parts.slice(1);
+
+        print(`shashank@portfolio:~$ ${trimmed}`, 'term-input-line-color');
+
+        if (commands[commandName]) {
+            const result = commands[commandName](args);
+            if (result) {
+                result.split('\n').forEach(line => print(line));
+            }
+        } else {
+            print(`bash: ${commandName}: command not found`, 'term-error');
+        }
+    }
+
+    inputEl?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const cmd = inputEl.value;
+            inputEl.value = '';
+            processCommand(cmd);
+        }
+    });
+
+    setTimeout(() => {
+        const termWin = document.getElementById(termId);
+        termWin?.addEventListener('click', () => inputEl?.focus());
+        inputEl?.focus();
+    }, 200);
+}
+
 function openFilesWindow() {
     const html = `
         <div class="file-grid">
@@ -395,14 +543,21 @@ function openPaintsFolder() {
 
 function openProjectsFolder() {
     const projects = [
-        { name: "Portfolio", description: "The Portfolio repository serves as a personal showcase of your skills, projects, and accomplishments, built using TypeScript and modern web development practices. It likely includes responsive design elements, interactive components, and organized sections for About, Projects, Skills, and Contact. The project demonstrates your ability to structure a complete frontend application, integrate styling frameworks or custom CSS, and deploy a web presence. It emphasizes your proficiency in web technologies, accessibility, and performance optimization. This portfolio acts as a central platform to present your work to potential employers or collaborators, highlighting coding standards, creativity, and user experience considerations." },
-        { name: "Password_Manager_Project", description: "The Portfolio repository serves as a personal showcase of your skills, projects, and accomplishments, built using TypeScript and modern web development practices. It likely includes responsive design elements, interactive components, and organized sections for About, Projects, Skills, and Contact. The project demonstrates your ability to structure a complete frontend application, integrate styling frameworks or custom CSS, and deploy a web presence. It emphasizes your proficiency in web technologies, accessibility, and performance optimization. This portfolio acts as a central platform to present your work to potential employers or collaborators, highlighting coding standards, creativity, and user experience considerations." },
-        { name: "XXS_Project", description: "XXS_Project (likely intended as XSS_Project) explores the concept of cross-site scripting vulnerabilities and defenses using Python. It probably contains examples of vulnerable code, exploitation techniques, and remediation practices such as sanitization and encoding. The project demonstrates your awareness of web security threats and the practical application of secure coding techniques. It may include test cases, demonstration scripts, and documentation explaining how various inputs can lead to script injection if unchecked. Through this repository, you illustrate an understanding of vulnerability assessment, secure backend handlers, and mitigation strategies essential for protecting web applications against client-side attacks." },
-        { name: "Route_OP", description: "Route_OP appears to be a Python-based project focused on routing optimization, pathfinding, or operations involving network routes. It could implement algorithms such as Dijkstra’s, A* search, or graph traversal techniques to compute optimal paths. This repository shows your grasp of algorithm design, data structures, and efficient computation. It might include visualizations, sample datasets, and comparison of algorithm performance under different scenarios. The project illustrates analytical problem-solving skills and the ability to translate abstract computational concepts into working code. It is relevant to logistics, navigation systems, and operations research, reflecting an intersection of theory and practical implementation." },
-        { name: "MRI_Project", description: "MRI_Project is a Jupyter Notebook repository likely focused on medical imaging analysis or machine learning with MRI data. It could include data preprocessing, visualization, and model training for classification or segmentation tasks. The project shows experience in scientific computing, use of libraries like NumPy, Pandas, and imaging tools, and potentially deep learning frameworks. It emphasizes handling complex multidimensional data, interpreting results, and documenting research steps. This repo demonstrates capabilities in data science, health-tech exploration, and reproducible analysis workflows. It reflects your interest in applying computational techniques to real-world scientific problems, bridging domain knowledge with technical execution." },
-        { name: "Travel_Planner_Project", description: "The Travel_Planner_Project repository suggests a web-based itinerary planner built with HTML and potentially additional scripting for interactive features. It likely includes destination selection, scheduling, and personalized trip recommendations. The project demonstrates your ability to structure content, use forms, and design UX flow for planning travel. With static HTML or integrated logic, it may support dynamic suggestions, cost estimations, or user preferences. This repository showcases frontend development skills, attention to usability, and creative problem solving. It simulates a practical application idea that organizes travel plans, illustrating how you can communicate complex information clearly using intuitive interfaces and foundational web technologies." },
-        { name: "Course_Reg", description: "Course_Reg, developed with EJS, appears to be a course registration system where users can select, register, or manage academic courses. The project likely includes form handling, server-side routing, and database integration to maintain student choices. Using EJS templates, it dynamically renders available courses and user feedback, demonstrating full-stack web development skills. It emphasizes real-world application logic, state persistence, and responsive interaction. The repository highlights your ability to construct educational tools that mirror real administrative tasks, incorporating backend processes and frontend rendering. This project displays competence in building structured web applications with templating engines and logic integration." },
-        { name: "New_LeaderBoard", description: "New_LeaderBoard is a JavaScript repository that implements a scoring board application, where users’ scores are added, displayed, and sorted dynamically. It likely demonstrates DOM manipulation, event handling, and persistent state using local storage or APIs. The project showcases interactive interface development, real-time updates, and modular code organization. It might include features to reset, filter, or update scores seamlessly, emphasizing responsiveness and UX design. This repository serves as an example of managing application state in the browser, crafting user interactions, and applying core JavaScript concepts. It reflects foundational frontend engineering skills in building engaging web components." }
+        { name: "Portfolio", description: "A retro macOS-themed interactive portfolio built with TypeScript and Vite. Features a CRT monitor simulation, boot sequence, draggable windows, and built-in apps like Paint, Flappy Bird, and Calculator." },
+        { name: "Password_Manager_Project", description: "A JavaScript-based password manager for storing and managing credentials locally. Implements encryption for secure password storage and retrieval with a clean UI." },
+        { name: "XXS_Project", description: "A Python-based toolkit for understanding Cross-Site Scripting (XSS) vulnerabilities. Includes examples of reflected, stored, and DOM-based XSS with remediation techniques and secure coding practices." },
+        { name: "Route_OP", description: "A route optimization project implementing pathfinding algorithms like Dijkstra and A* search. Demonstrates graph traversal techniques for efficient navigation and logistics planning." },
+        { name: "MRI_Project", description: "A Jupyter Notebook project for medical image analysis using brain MRI data. Includes preprocessing pipelines, visualization tools, and deep learning models for classification tasks." },
+        { name: "Travel_Planner_Project", description: "An HTML-based travel itinerary planner with destination selection, scheduling, and trip recommendations. Features interactive forms for building custom travel plans." },
+        { name: "Course_Reg", description: "A course registration system built with EJS templating. Allows students to browse available courses, register, and manage their academic schedule with server-side routing." },
+        { name: "New_LeaderBoard", description: "A JavaScript leaderboard application that displays and sorts user scores dynamically. Features real-time updates, local storage persistence, and a clean responsive UI." },
+        { name: "AI_Interviewer_Project", description: "An AI-powered interview preparation tool that simulates interview questions and provides feedback. Built with JavaScript for interactive practice sessions." },
+        { name: "Blockchain_Project", description: "A TypeScript blockchain implementation covering core concepts — blocks, transactions, mining, and consensus mechanisms. Educational project for understanding distributed ledger technology." },
+        { name: "Devops_project", description: "A DevOps automation project showcasing CI/CD pipelines, Docker containerization, and cloud deployment workflows. Demonstrates modern infrastructure-as-code practices." },
+        { name: "EEG_Project", description: "A Python-based EEG signal analysis project for processing and classifying brain activity data. Uses machine learning techniques for pattern recognition in neural signals." },
+        { name: "EsIOT_Project", description: "6th semester IoT course project exploring embedded systems and Internet of Things concepts. Includes sensor integration, data collection, and real-time monitoring." },
+        { name: "GenAI_Project", description: "A generative AI project exploring AI-powered content generation. Built with HTML and JavaScript for interactive demonstrations of language models." },
+        { name: "Intubation_Project", description: "A medical data analysis project using Jupyter Notebooks for intubation procedure risk assessment. Applies machine learning to clinical decision support." }
     ];
 
     let html = '<div class="file-grid">';
@@ -1152,6 +1307,11 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'contact') {
             openContactForm();
+            return;
+        }
+
+        if (id === 'terminal') {
+            openTerminal();
             return;
         }
 
