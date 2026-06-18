@@ -4,14 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k \"node api/dev-server.mjs\" \"vite\"",
+    "dev:api": "node api/dev-server.mjs",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "vercel-build": "npx tsc && npx vite build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^10.0.3",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   }
