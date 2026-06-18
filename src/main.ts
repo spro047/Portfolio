@@ -242,11 +242,13 @@ function setDesktopWallpaper(url: string) {
     }
 }
 
-// Load saved wallpaper on start — default to wallpaper2
 const savedWallpaper = localStorage.getItem('desktop-wallpaper');
 const defaultWallpaper = './img/wallpapers/wallpaper2.png';
 if (desktop) {
-    desktop.style.backgroundImage = `url('${savedWallpaper || defaultWallpaper}')`;
+    const wp = savedWallpaper || defaultWallpaper;
+    desktop.style.backgroundImage = `url('${wp}')`;
+    desktop.style.backgroundSize = 'cover';
+    desktop.style.backgroundPosition = 'center';
     if (!savedWallpaper) {
         localStorage.setItem('desktop-wallpaper', defaultWallpaper);
     }
