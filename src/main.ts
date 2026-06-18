@@ -1147,14 +1147,117 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'resume') {
             content = `
-                <div class="content-page" style="padding: 0; height: 100%; display: flex; flex-direction: column;">
-                    <div style="text-align: center; padding: 8px; background: #f5f5f5; border-bottom: 1px solid #ccc; flex-shrink: 0;">
-                        <a href="./img/Resume.pdf" target="_blank" style="color: #007bff; font-size: 13px; text-decoration: underline;">Open PDF in new tab →</a>
-                    </div>
-                    <iframe src="./img/Resume.pdf" style="width: 100%; flex: 1; border: none;"></iframe>
+                <div class="content-page">
+                    <header class="resume-header">
+                        <h1 class="resume-name">Shashank Shetgeri</h1>
+                        <p class="resume-detail">shashankshetgeri@gmail.com | 9480128298 | <a href="https://linkedin.com/in/shashank-shetgeri" target="_blank" style="color: #007bff;">LinkedIn</a> | <a href="https://github.com/spro047" target="_blank" style="color: #007bff;">GitHub</a> | Belgaum, Karnataka</p>
+                    </header>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Introduction</h2>
+                        <p style="margin: 4px 0;">Computer Science Engineering student with hands-on experience in Web Designing, Artificial Intelligence, and Machine Learning through internships, projects, and research publications. Skilled in C/C++, with experience in developing responsive web applications and AI-driven healthcare solutions. Passionate about building scalable, high-impact systems and applying modern technologies to solve real-world problems.</p>
+                    </section>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Skills</h2>
+                        <p class="resume-tech-label"><strong>Languages:</strong> C/C++</p>
+                        <p class="resume-tech-label"><strong>Web Tools:</strong> Elementor, Wix</p>
+                        <p class="resume-tech-label"><strong>DevOps &amp; Cloud:</strong> Docker, AWS, Git, GitHub</p>
+                        <p class="resume-tech-label"><strong>Databases:</strong> MongoDB</p>
+                    </section>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Internships</h2>
+                        <div class="resume-row">
+                            <span>Technology Intern, Webrook – Remote</span>
+                            <span>Jun 2025 – Aug 2025</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Designed and optimized responsive websites using Elementor and Wix, enhancing user experience across desktop and mobile platforms.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Software Intern, Eyesec Cyber Security Solutions Pvt. Ltd. – Belagavi</span>
+                            <span>Jan 2024 – Apr 2024</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Gained hands-on experience in cybersecurity by identifying security vulnerabilities and applying secure software development practices.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Student Intern, Eyesec Cyber Security Solutions Pvt. Ltd. – Belagavi</span>
+                            <span>Jan 2023 – Jul 2023</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Worked on Full Stack Development technologies. Assisted in developing and testing applications while gaining practical exposure to real-world project workflows.</li>
+                        </ul>
+                    </section>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Projects</h2>
+                        <div class="resume-row">
+                            <span>Gender-Aware ADHD Detection Framework Using XGBoost and FLAML</span>
+                            <span>WiDS Datathon 2025</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Developed a dual-model ADHD prediction framework using XGBoost and FLAML, achieving AUC scores of 0.77 for gender classification and 0.84 for ADHD prediction, leading to an MDPI research publication.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Alzheimer's Disease Detection Using Deep Learning</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Developed and evaluated CNN, VGG16, ResNet50, DenseNet201, InceptionV3, and EfficientNet-B1 models for multi-class Alzheimer's disease classification using brain MRI scans.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Knowledge Graph-Based Generative AI Assistant</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Built a Knowledge Graph-based RAG assistant to enhance contextual information retrieval and improve the relevance of AI-generated responses.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Inventory Management System</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Developed and containerized an inventory management system using Docker and AWS, enabling scalable deployment and streamlined application management.</li>
+                        </ul>
+                    </section>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Education</h2>
+                        <div class="resume-row">
+                            <span>KLE Technological University, Dr. M. S. Sheshgiri Campus</span>
+                            <span>2024 – 2027</span>
+                        </div>
+                        <div class="resume-sub">Bachelor of Engineering (B.E.) in Computer Science and Engineering</div>
+                        <div class="resume-row">
+                            <span>KLS Shri Vasantrao Polytechnic</span>
+                            <span>2021 – 2024</span>
+                        </div>
+                        <div class="resume-sub">Diploma in Computer Science and Engineering</div>
+                    </section>
+
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Publications &amp; Achievement</h2>
+                        <div class="resume-row">
+                            <span>Gender-Aware ADHD Detection Framework Combining XGBoost and FLAML Models</span>
+                            <span>Comput. Sci. Math. Forum (MDPI), 2025</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Published research on ADHD prediction using XGBoost, FLAML with multi-modal data fusion.</li>
+                        </ul>
+                        <div class="resume-row">
+                            <span>Comparative Deep Neural Study For Stage-Wise Alzheimer's Disease Detection Using Brain MRI</span>
+                            <span>Accepted / Publication Pending</span>
+                        </div>
+                        <ul class="resume-list">
+                            <li>Conducted a comparative analysis of CNN, VGG16, ResNet50, DenseNet201, InceptionV3, and EfficientNet-B1 models for Alzheimer's stage classification using MRI scans.</li>
+                        </ul>
+                        <ul class="resume-list" style="margin-top: 8px;">
+                            <li>Won 1st Place in Best DevOps Project Competition.</li>
+                            <li>Solved 100+ DSA problems on LeetCode.</li>
+                        </ul>
+                    </section>
                 </div>
             `;
-            createWindow('Resume', content, 800, 700);
+            createWindow('Resume', content, 600, 650);
             return;
         }
 
