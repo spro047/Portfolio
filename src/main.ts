@@ -417,7 +417,7 @@ function createWindow(title: string, content: string, width?: number, height?: n
 }
 
 // Global window control functions (exposed for inline onclick)
-function minimizeWindow(id: string) {
+(window as any).minimizeWindow = (id: string) => {
     const entry = windowRegistry.find(w => w.id === id);
     if (entry) {
         entry.minimized = !entry.minimized;
@@ -426,14 +426,14 @@ function minimizeWindow(id: string) {
     }
 };
 
-function maximizeWindow(id: string) {
+(window as any).maximizeWindow = (id: string) => {
     const entry = windowRegistry.find(w => w.id === id);
     if (entry) {
         entry.element.classList.toggle('maximized');
     }
 };
 
-function closeWindow(id: string) {
+(window as any).closeWindow = (id: string) => {
     const entry = windowRegistry.find(w => w.id === id);
     if (entry) {
         entry.element.remove();
