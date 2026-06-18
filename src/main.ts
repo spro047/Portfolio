@@ -300,7 +300,7 @@ function openFilesWindow() {
                 <img src="./img/Sub_folders.png" alt="Folder" />
                 <span class="file-label">Wallpaper</span>
             </div>
-            <div class="file-item folder-item">
+            <div class="file-item folder-item" id="folder-documents">
                 <img src="./img/Sub_folders.png" alt="Folder" />
                 <span class="file-label">Documents</span>
             </div>
@@ -323,6 +323,26 @@ function openFilesWindow() {
         if (wpFolder) {
             wpFolder.addEventListener('click', () => {
                 openWallpaperFolder();
+            });
+        }
+        const docFolder = document.getElementById('folder-documents');
+        if (docFolder) {
+            docFolder.addEventListener('click', () => {
+                createWindow('Documents', `
+                    <div class="content-page">
+                        <div class="file-grid">
+                            <div class="file-item" id="file-resume-pdf">
+                                <img src="./img/Resume.png" alt="File" />
+                                <span class="file-label">Resume.pdf</span>
+                            </div>
+                        </div>
+                    </div>
+                `, 400, 300);
+                setTimeout(() => {
+                    document.getElementById('file-resume-pdf')?.addEventListener('dblclick', () => {
+                        createWindow('Resume.pdf', '<iframe src="./img/Resume.pdf" style="width:100%;height:100%;border:none;"></iframe>', 700, 600);
+                    });
+                }, 100);
             });
         }
         const paintFolder = document.getElementById('folder-paints');
