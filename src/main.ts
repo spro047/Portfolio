@@ -106,18 +106,25 @@ function transitionToDesktop() {
     // Auto-open This PC window
     const thisPCContent = `
         <div class="content-page">
-          <p><strong>Navigation Guide:</strong></p>
-          <ul style="padding-left: 20px; margin-top: 10px;">
-            <li><strong>This PC:</strong> Navigate the system</li>
-            <li><strong>Files:</strong> Browse folders & change wallpapers</li>
-            <li><strong>GitHub:</strong> Check projects</li>
-            <li><strong>Resume:</strong> View professional background</li>
-            <li><strong>Research:</strong> Scientific contributions</li>
-            <li><strong>Trash:</strong> Where bugs go</li>
+          <div style="margin-bottom: 16px; padding: 12px; background: #e8f0fe; border-radius: 6px;">
+            <h2 style="margin: 0 0 4px 0; font-size: 16px;">Hi, I'm Shashank 👋</h2>
+            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer passionate about building cool things.</p>
+          </div>
+
+          <p><strong>How to use this OS Portfolio:</strong></p>
+          <ul style="padding-left: 20px; margin-top: 8px;">
+            <li><strong>This PC</strong> — You're here! A quick intro to the system.</li>
+            <li><strong>Files</strong> — Browse folders, open wallpapers, and change the desktop background.</li>
+            <li><strong>Resume</strong> — View my professional background and skills.</li>
+            <li><strong>GitHub</strong> — Check out my projects and open-source work.</li>
+            <li><strong>Research</strong> — My published scientific papers and contributions.</li>
+            <li><strong>Paint</strong> — A simple drawing app to doodle around.</li>
+            <li><strong>Calendar</strong> — Check today's date and time.</li>
+            <li><strong>Trash</strong> — Where bugs and unused files go.</li>
           </ul>
         </div>
       `;
-    createWindow('This PC', thisPCContent);
+    createWindow('This PC', thisPCContent, 500, 420);
 }
 
 function updateClock() {
@@ -1132,17 +1139,26 @@ document.querySelectorAll('.dock-item').forEach(item => {
         if (id === 'this-pc') {
             content = `
         <div class="content-page">
-          <p><strong>Navigation Guide:</strong></p>
-          <ul style="padding-left: 20px; margin-top: 10px;">
-            <li><strong>This PC:</strong> Navigate the system</li>
-            <li><strong>Files:</strong> Browse folders & change wallpapers</li>
-            <li><strong>Resume:</strong> View professional background</li>
-            <li><strong>GitHub:</strong> Check projects</li>
-            <li><strong>Research:</strong> Scientific contributions</li>
-            <li><strong>Trash:</strong> Where bugs go</li>
+          <div style="margin-bottom: 16px; padding: 12px; background: #e8f0fe; border-radius: 6px;">
+            <h2 style="margin: 0 0 4px 0; font-size: 16px;">Hi, I'm Shashank 👋</h2>
+            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer passionate about building cool things.</p>
+          </div>
+
+          <p><strong>How to use this OS Portfolio:</strong></p>
+          <ul style="padding-left: 20px; margin-top: 8px;">
+            <li><strong>This PC</strong> — You're here! A quick intro to the system.</li>
+            <li><strong>Files</strong> — Browse folders, open wallpapers, and change the desktop background.</li>
+            <li><strong>Resume</strong> — View my professional background and skills.</li>
+            <li><strong>GitHub</strong> — Check out my projects and open-source work.</li>
+            <li><strong>Research</strong> — My published scientific papers and contributions.</li>
+            <li><strong>Paint</strong> — A simple drawing app to doodle around.</li>
+            <li><strong>Calendar</strong> — Check today's date and time.</li>
+            <li><strong>Trash</strong> — Where bugs and unused files go.</li>
           </ul>
         </div>
       `;
+            createWindow('This PC', content, 500, 420);
+            return;
         }
 
         if (id === 'resume') {
