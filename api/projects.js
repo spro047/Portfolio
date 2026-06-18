@@ -1,7 +1,7 @@
 // Vercel Serverless Function — GET /api/projects
 // Returns project portfolio data from JSON seed file.
 
-import projects from "../data/projects.json" assert { type: "json" };
+import projects from "../data/projects.json" with { type: "json" };
 
 export default function handler(req, res) {
   const { id } = req.query;

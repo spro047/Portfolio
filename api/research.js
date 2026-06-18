@@ -1,7 +1,7 @@
 // Vercel Serverless Function — GET /api/research
 // Returns research papers data from JSON seed file.
 
-import papers from "../data/research.json" assert { type: "json" };
+import papers from "../data/research.json" with { type: "json" };
 
 export default function handler(req, res) {
   const { id, topic } = req.query;
