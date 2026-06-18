@@ -341,6 +341,18 @@ body {
   overflow: hidden;
 }
 
+.window.minimized {
+  display: none;
+}
+
+.window.maximized {
+  width: 100% !important;
+  height: 100% !important;
+  top: 0 !important;
+  left: 0 !important;
+  border-radius: 0;
+}
+
 .window-header {
   height: 28px;
   background: linear-gradient(135deg, var(--mac-titlebar-start), var(--mac-titlebar-end));
@@ -384,6 +396,22 @@ body {
 
 .close::after {
   content: "×";
+}
+
+.minimize {
+  background: #ffbd2e;
+}
+
+.minimize::after {
+  content: "−";
+}
+
+.maximize {
+  background: #28c940;
+}
+
+.maximize::after {
+  content: "+";
 }
 
 .window-title {

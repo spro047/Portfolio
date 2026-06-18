@@ -178,8 +178,8 @@ function createWindow(title: string, content: string, width?: number, height?: n
     <div class="window-header">
       <div class="window-title">${title}</div>
       <div class="window-controls">
-        <div class="control minimize"></div>
-        <div class="control maximize"></div>
+        <div class="control minimize" onclick="this.closest('.window').classList.toggle('minimized')"></div>
+        <div class="control maximize" onclick="this.closest('.window').classList.toggle('maximized')"></div>
         <div class="control close" onclick="this.closest('.window').remove()"></div>
       </div>
     </div>
