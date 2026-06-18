@@ -1330,7 +1330,365 @@ body {
   border: 1px solid #f5c6cb;
 }
 
-/* Terminal App */
+/* =============================================
+   Notification / Toast System
+   ============================================= */
+#notification-container {
+  position: fixed;
+  top: 40px;
+  right: 16px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: 320px;
+}
+
+.toast {
+  pointer-events: auto;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  animation: toastSlideIn 0.3s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+}
+
+.toast.toast-info { background: rgba(0, 0, 0, 0.8); }
+.toast.toast-success { background: rgba(40, 167, 69, 0.9); }
+.toast.toast-error { background: rgba(220, 53, 69, 0.9); }
+.toast.toast-warning { background: rgba(255, 193, 7, 0.9); color: #222; }
+
+.toast-removing {
+  animation: toastSlideOut 0.25s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastSlideOut {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100%); opacity: 0; }
+}
+
+/* =============================================
+   Taskbar
+   ============================================= */
+.taskbar {
+  position: absolute;
+  bottom: 105px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  gap: 4px;
+  z-index: 99;
+  min-width: 100px;
+  max-width: 60vw;
+  overflow-x: auto;
+}
+
+.taskbar-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+  border: none;
+}
+
+.taskbar-item:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.taskbar-item.active {
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: inset 0 -2px 0 #4a80d4;
+}
+
+.taskbar-item img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* =============================================
+   Dark Mode
+   ============================================= */
+.desktop.dark-mode {
+  --platinum-light: #2a2a2a;
+  --platinum-base: #1a1a1a;
+  --platinum-dark: #0d0d0d;
+  --platinum-highlight: #333;
+  --mac-desktop: #1a1a2e;
+  --mac-titlebar-start: #1a1a3e;
+  --mac-titlebar-end: #0d0d2e;
+  --mac-titlebar-text: #e0e0e0;
+  --mac-window-bg: #1e1e1e;
+  --mac-window-border: #444;
+  --mac-menu-bg: #222;
+  --mac-menu-text: #e0e0e0;
+  --mac-shadow: rgba(0, 0, 0, 0.6);
+}
+
+.desktop.dark-mode .top-bar {
+  background: #222;
+  color: #e0e0e0;
+  border-bottom-color: #444;
+}
+
+.desktop.dark-mode .window {
+  background: #2a2a2a;
+}
+
+.desktop.dark-mode .window-content {
+  background: #1e1e1e;
+  color: #ccc;
+}
+
+.desktop.dark-mode .window-content .file-label {
+  color: #ccc;
+}
+
+.desktop.dark-mode .dock {
+  background: rgba(30, 30, 30, 0.8);
+}
+
+.desktop.dark-mode .menu-grid {
+  background: radial-gradient(circle at center, #2a2a2a, #1a1a1a);
+}
+
+.desktop.dark-mode .menu-app-item {
+  background: rgba(50, 50, 50, 0.5);
+  border-color: transparent;
+}
+
+.desktop.dark-mode .menu-app-item span {
+  color: #ccc;
+}
+
+.dark-mode-toggle {
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.dark-mode-toggle:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.desktop.dark-mode .dark-mode-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* =============================================
+   Search Bar
+   ============================================= */
+.search-overlay {
+  position: absolute;
+  top: var(--header-height);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 420px;
+  max-width: 90vw;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  z-index: 3000;
+  overflow: hidden;
+  font-family: 'Inter', sans-serif;
+}
+
+.desktop.dark-mode .search-overlay {
+  background: rgba(30, 30, 30, 0.95);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.desktop.dark-mode .search-input-wrapper {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.search-icon {
+  font-size: 16px;
+  margin-right: 10px;
+  color: #888;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+  color: #000;
+  font-family: 'Inter', sans-serif;
+}
+
+.desktop.dark-mode .search-input {
+  color: #e0e0e0;
+}
+
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.search-result-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #333;
+  transition: background 0.1s;
+}
+
+.desktop.dark-mode .search-result-item {
+  color: #ccc;
+}
+
+.search-result-item:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.desktop.dark-mode .search-result-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.search-result-item .result-icon {
+  font-size: 16px;
+  width: 24px;
+  text-align: center;
+}
+
+.search-result-item .result-category {
+  font-size: 10px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+.search-empty {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+  font-size: 13px;
+}
+
+/* =============================================
+   Screensaver
+   ============================================= */
+.screensaver-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  z-index: 9999;
+  display: none;
+  overflow: hidden;
+  cursor: none;
+}
+
+.screensaver-overlay.active {
+  display: block;
+}
+
+.screensaver-object {
+  position: absolute;
+  font-size: 40px;
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: none;
+}
+
+/* =============================================
+   Blog / Articles
+   ============================================= */
+.blog-list {
+  padding: 0;
+}
+
+.blog-post {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.blog-post:first-child {
+  padding-top: 0;
+}
+
+.blog-post:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.blog-post h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.desktop.dark-mode .blog-post h3 { color: #e0e0e0; }
+.desktop.dark-mode .blog-post { border-bottom-color: #444; }
+
+.blog-post .blog-meta {
+  font-size: 11px;
+  color: #888;
+  margin-bottom: 6px;
+}
+
+.blog-post .blog-excerpt {
+  font-size: 12px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.desktop.dark-mode .blog-post .blog-excerpt { color: #aaa; }
+
+/* =============================================
+   Terminal App
+   ============================================= */
 .terminal-window {
   display: flex;
   flex-direction: column;

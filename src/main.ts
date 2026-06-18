@@ -105,6 +105,16 @@ function transitionToDesktop() {
 
     setupContextMenu();
 
+    if (darkMode) desktop?.classList.add('dark-mode');
+    const darkToggle = document.getElementById('dark-mode-toggle');
+    if (darkToggle) darkToggle.textContent = darkMode ? '🌙' : '☀️';
+
+    darkToggle?.addEventListener('click', toggleDarkMode);
+    document.getElementById('search-toggle')?.addEventListener('click', openSearch);
+
+    startScreensaverTimer();
+    trackPageView();
+
     if (!localStorage.getItem('boot-time')) {
         localStorage.setItem('boot-time', Date.now().toString());
     }
@@ -162,6 +172,83 @@ function setupContextMenu() {
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target as Node)) menu.classList.add('hidden');
     });
+
+    // Long-press for mobile context menu
+    let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+    document.addEventListener('touchstart', (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('.window') || target.closest('.dock') || target.closest('.top-bar')) return;
+        longPressTimer = setTimeout(() => {
+            const touch = e.touches[0];
+            menu.style.left = `${touch.clientX}px`;
+            menu.style.top = `${touch.clientY}px`;
+            menu.classList.remove('hidden');
+            longPressTimer = null;
+        }, 500);
+    }, { passive: true });
+    document.addEventListener('touchend', () => {
+        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    }, { passive: true });
+    document.addEventListener('touchmove', () => {
+        if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+    }, { passive: true });
+}
+
+// ============ Notification System ============
+function showNotification(message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') {
+    const container = document.getElementById('notification-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('toast-removing');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ============ Window Registry + Taskbar ============
+interface WindowEntry {
+    id: string;
+    title: string;
+    minimized: boolean;
+    element: HTMLElement;
+}
+
+const windowRegistry: WindowEntry[] = [];
+
+function syncTaskbar() {
+    const taskbar = document.getElementById('taskbar');
+    if (!taskbar) return;
+
+    const visible = windowRegistry.filter(w => document.body.contains(w.element));
+    if (visible.length === 0) {
+        taskbar.classList.add('hidden');
+        return;
+    }
+    taskbar.classList.remove('hidden');
+
+    taskbar.innerHTML = '';
+    visible.forEach(entry => {
+        const item = document.createElement('button');
+        item.className = 'taskbar-item' + (entry.minimized ? '' : ' active');
+        item.textContent = entry.title;
+        item.addEventListener('click', () => {
+            if (entry.minimized) {
+                entry.element.classList.remove('minimized');
+                entry.minimized = false;
+                entry.element.style.zIndex = (++highestZIndex).toString();
+            } else {
+                entry.element.classList.add('minimized');
+                entry.minimized = true;
+            }
+            syncTaskbar();
+        });
+        taskbar.appendChild(item);
+    });
 }
 
 function updateClock() {
@@ -215,9 +302,9 @@ function createWindow(title: string, content: string, width?: number, height?: n
     <div class="window-header">
       <div class="window-title">${title}</div>
       <div class="window-controls">
-        <div class="control minimize" onclick="this.closest('.window').classList.toggle('minimized')"></div>
-        <div class="control maximize" onclick="this.closest('.window').classList.toggle('maximized')"></div>
-        <div class="control close" onclick="this.closest('.window').remove()"></div>
+        <div class="control minimize" onclick="window.minimizeWindow && window.minimizeWindow('${windowId}')"></div>
+        <div class="control maximize" onclick="window.maximizeWindow && window.maximizeWindow('${windowId}')"></div>
+        <div class="control close" onclick="window.closeWindow && window.closeWindow('${windowId}')"></div>
       </div>
     </div>
     <div class="window-content">
@@ -243,6 +330,16 @@ function createWindow(title: string, content: string, width?: number, height?: n
         win.style.zIndex = (++highestZIndex).toString();
     });
 
+    // Touch support for dragging
+    header.addEventListener('touchstart', (e) => {
+        const touch = e.touches[0];
+        isDragging = true;
+        offsetX = touch.clientX - win.offsetLeft;
+        offsetY = touch.clientY - win.offsetTop;
+        win.style.zIndex = (++highestZIndex).toString();
+        e.preventDefault();
+    }, { passive: false });
+
     // Make Resizable
     const resizer = document.createElement('div');
     resizer.className = 'resizer';
@@ -256,7 +353,14 @@ function createWindow(title: string, content: string, width?: number, height?: n
         e.preventDefault();
     });
 
-    document.addEventListener('mousemove', (e) => {
+    // Touch support for resizing
+    resizer.addEventListener('touchstart', (e) => {
+        isResizing = true;
+        e.stopPropagation();
+        e.preventDefault();
+    }, { passive: false });
+
+    function handleMouseMove(e: MouseEvent) {
         if (isDragging) {
             win.style.left = `${e.clientX - offsetX}px`;
             win.style.top = `${e.clientY - offsetY}px`;
@@ -267,15 +371,77 @@ function createWindow(title: string, content: string, width?: number, height?: n
             if (width > 200) win.style.width = `${width}px`;
             if (height > 150) win.style.height = `${height}px`;
         }
-    });
+    }
 
-    document.addEventListener('mouseup', () => {
+    function handleTouchMove(e: TouchEvent) {
+        const touch = e.touches[0];
+        if (isDragging) {
+            win.style.left = `${touch.clientX - offsetX}px`;
+            win.style.top = `${touch.clientY - offsetY}px`;
+        } else if (isResizing) {
+            const width = touch.clientX - win.offsetLeft;
+            const height = touch.clientY - win.offsetTop;
+
+            if (width > 200) win.style.width = `${width}px`;
+            if (height > 150) win.style.height = `${height}px`;
+        }
+    }
+
+    function handleEnd() {
         isDragging = false;
         isResizing = false;
-    });
+    }
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('touchend', handleEnd);
 
     windowContainer!.appendChild(win);
+
+    // Register window in taskbar
+    const entry: WindowEntry = { id: windowId, title, minimized: false, element: win };
+    windowRegistry.push(entry);
+    syncTaskbar();
+
+    // Clean up registry when window is removed
+    const observer = new MutationObserver(() => {
+        if (!document.body.contains(win)) {
+            const idx = windowRegistry.findIndex(w => w.id === windowId);
+            if (idx !== -1) windowRegistry.splice(idx, 1);
+            syncTaskbar();
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
 }
+
+// Global window control functions (exposed for inline onclick)
+function minimizeWindow(id: string) {
+    const entry = windowRegistry.find(w => w.id === id);
+    if (entry) {
+        entry.minimized = !entry.minimized;
+        entry.element.classList.toggle('minimized', entry.minimized);
+        syncTaskbar();
+    }
+};
+
+function maximizeWindow(id: string) {
+    const entry = windowRegistry.find(w => w.id === id);
+    if (entry) {
+        entry.element.classList.toggle('maximized');
+    }
+};
+
+function closeWindow(id: string) {
+    const entry = windowRegistry.find(w => w.id === id);
+    if (entry) {
+        entry.element.remove();
+        const idx = windowRegistry.findIndex(w => w.id === id);
+        if (idx !== -1) windowRegistry.splice(idx, 1);
+        syncTaskbar();
+    }
+};
 
 // Wallpaper Logic
 function setDesktopWallpaper(url: string) {
@@ -765,6 +931,18 @@ function openPaint() {
             snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
         });
 
+        canvas.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            lastX = touch.clientX - rect.left;
+            lastY = touch.clientY - rect.top;
+            startX = lastX;
+            startY = lastY;
+            isDrawing = true;
+            snapshot = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            e.preventDefault();
+        }, { passive: false });
+
         canvas.addEventListener('mousemove', (e) => {
             if (!isDrawing) return;
             const rect = canvas.getBoundingClientRect();
@@ -804,6 +982,47 @@ function openPaint() {
                 }
             }
         });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing) return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+
+            if (currentTool === 'pencil' || currentTool === 'brush' || currentTool === 'eraser') {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                lastX = x;
+                lastY = y;
+            } else if (currentTool === 'picker') {
+                const pixel = ctx.getImageData(x, y, 1, 1).data;
+                const hex = "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
+                currentColor = hex;
+                ctx.strokeStyle = hex;
+                ctx.fillStyle = hex;
+                const preview = document.getElementById('current-color');
+                if (preview) preview.style.background = hex;
+            } else {
+                if (snapshot) ctx.putImageData(snapshot, 0, 0);
+
+                if (currentTool === 'line') {
+                    ctx.beginPath();
+                    ctx.moveTo(startX, startY);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                } else if (currentTool === 'rect') {
+                    ctx.strokeRect(startX, startY, x - startX, y - startY);
+                } else if (currentTool === 'ellipse') {
+                    ctx.beginPath();
+                    ctx.ellipse(startX + (x - startX) / 2, startY + (y - startY) / 2, Math.abs(x - startX) / 2, Math.abs(y - startY) / 2, 0, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+            }
+            e.preventDefault();
+        }, { passive: false });
 
         canvas.addEventListener('mouseup', () => {
             if (isDrawing) {
@@ -993,6 +1212,10 @@ function openFlappyBird() {
             jumpBird();
             e.preventDefault();
         });
+        canvas.addEventListener('touchstart', (e) => {
+            jumpBird();
+            e.preventDefault();
+        }, { passive: false });
 
         // Clean up on window close
         const closeBtn = canvas.closest('.window')?.querySelector('.close');
@@ -1274,6 +1497,301 @@ function openMenuWindow() {
     }, 100);
 }
 
+// ============ Dark Mode Toggle ============
+let darkMode = localStorage.getItem('dark-mode') === 'true';
+
+function toggleDarkMode() {
+    darkMode = !darkMode;
+    const desktop = document.getElementById('desktop');
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (desktop) desktop.classList.toggle('dark-mode', darkMode);
+    if (toggle) toggle.textContent = darkMode ? '🌙' : '☀️';
+    localStorage.setItem('dark-mode', String(darkMode));
+    showNotification(darkMode ? 'Dark Mode enabled' : 'Light Mode enabled', 'info');
+}
+
+// ============ Search ============
+const searchData = [
+    { label: 'This PC', category: 'System', icon: '🖥️', action: 'this-pc' },
+    { label: 'Resume', category: 'System', icon: '📄', action: 'resume' },
+    { label: 'Research Papers', category: 'System', icon: '🔬', action: 'research' },
+    { label: 'GitHub', category: 'External', icon: '🐙', action: 'github' },
+    { label: 'Projects - Portfolio', category: 'Project', icon: '📁', action: 'project:Portfolio' },
+    { label: 'Projects - Password Manager', category: 'Project', icon: '📁', action: 'project:Password Manager' },
+    { label: 'Projects - Blockchain', category: 'Project', icon: '📁', action: 'project:Blockchain' },
+    { label: 'Projects - AI Interviewer', category: 'Project', icon: '📁', action: 'project:AI Interviewer' },
+    { label: 'Projects - GenAI', category: 'Project', icon: '📁', action: 'project:GenAI' },
+    { label: 'Projects - EEG', category: 'Project', icon: '📁', action: 'project:EEG' },
+    { label: 'Projects - MRI', category: 'Project', icon: '📁', action: 'project:MRI' },
+    { label: 'Projects - DevOps', category: 'Project', icon: '📁', action: 'project:DevOps' },
+    { label: 'ADHD Research Publication', category: 'Publication', icon: '📝', action: 'research' },
+    { label: "Alzheimer's Detection Research", category: 'Publication', icon: '📝', action: 'research' },
+    { label: 'Terminal', category: 'App', icon: '💻', action: 'terminal' },
+    { label: 'Paint', category: 'App', icon: '🎨', action: 'paint' },
+    { label: 'Calculator', category: 'App', icon: '🧮', action: 'calculator' },
+    { label: 'Flappy Bird', category: 'Game', icon: '🐦', action: 'flappy-bird' },
+    { label: 'Calendar', category: 'App', icon: '📅', action: 'calendar' },
+    { label: 'Contact Me', category: 'System', icon: '✉️', action: 'contact' },
+    { label: 'Blog / Articles', category: 'System', icon: '📰', action: 'blog' },
+    { label: 'Skills - C/C++', category: 'Skill', icon: '⚡', action: 'resume' },
+    { label: 'Skills - Docker', category: 'Skill', icon: '⚡', action: 'resume' },
+    { label: 'Skills - AWS', category: 'Skill', icon: '⚡', action: 'resume' },
+    { label: 'Skills - MongoDB', category: 'Skill', icon: '⚡', action: 'resume' },
+    { label: 'Skills - Git', category: 'Skill', icon: '⚡', action: 'resume' },
+    { label: 'Wallpapers', category: 'System', icon: '🖼️', action: 'wallpapers' },
+    { label: 'Files', category: 'System', icon: '📂', action: 'files' },
+];
+
+let searchOverlay: HTMLElement | null = null;
+
+function openSearch() {
+    if (searchOverlay) { searchOverlay.remove(); searchOverlay = null; return; }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'search-overlay';
+    overlay.innerHTML = `
+        <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="search-input" placeholder="Search projects, skills, apps..." autofocus />
+        </div>
+        <div class="search-results" id="search-results">
+            <div class="search-empty">Type to search...</div>
+        </div>
+    `;
+    document.getElementById('desktop')?.appendChild(overlay);
+    searchOverlay = overlay;
+
+    const input = overlay.querySelector('.search-input') as HTMLInputElement;
+    const results = overlay.querySelector('.search-results') as HTMLElement;
+
+    input.addEventListener('input', () => {
+        const q = input.value.toLowerCase().trim();
+        if (!q) {
+            results.innerHTML = '<div class="search-empty">Type to search...</div>';
+            return;
+        }
+
+        const matches = searchData.filter(item =>
+            item.label.toLowerCase().includes(q) ||
+            item.category.toLowerCase().includes(q)
+        );
+
+        if (matches.length === 0) {
+            results.innerHTML = '<div class="search-empty">No results found</div>';
+            return;
+        }
+
+        results.innerHTML = matches.map(m => `
+            <div class="search-result-item" data-action="${m.action}">
+                <span class="result-icon">${m.icon}</span>
+                <span>${m.label}</span>
+                <span class="result-category">${m.category}</span>
+            </div>
+        `).join('');
+
+        results.querySelectorAll('.search-result-item').forEach(el => {
+            el.addEventListener('click', () => {
+                const action = (el as HTMLElement).getAttribute('data-action') || '';
+                overlay.remove();
+                searchOverlay = null;
+                handleSearchAction(action);
+            });
+        });
+    });
+
+    setTimeout(() => input?.focus(), 50);
+}
+
+function handleSearchAction(action: string) {
+    if (action.startsWith('project:')) {
+        openProjectsFolder();
+        return;
+    }
+    const dockItem = document.getElementById(action);
+    if (dockItem) {
+        (dockItem as HTMLElement).click();
+    } else if (action === 'github') {
+        window.open('https://github.com/spro047?tab=repositories', '_blank');
+    } else if (action === 'wallpapers') {
+        openWallpaperFolder();
+    } else if (action === 'calculator') {
+        openCalculator();
+    } else if (action === 'blog') {
+        openBlog();
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && searchOverlay) {
+        searchOverlay.remove();
+        searchOverlay = null;
+    }
+});
+
+// ============ Screensaver ============
+let screensaverTimer: ReturnType<typeof setTimeout> | null = null;
+const SCREENSAVER_TIMEOUT = 120000;
+
+function startScreensaverTimer() {
+    if (screensaverTimer) clearTimeout(screensaverTimer);
+    screensaverTimer = setTimeout(activateScreensaver, SCREENSAVER_TIMEOUT);
+}
+
+function activateScreensaver() {
+    const overlay = document.getElementById('screensaver');
+    if (!overlay) return;
+
+    overlay.classList.add('active');
+    overlay.innerHTML = '';
+
+    const symbols = ['🍞', '🔥', '✦', '⬡', '⚡', '◆', '★', '☄'];
+    for (let i = 0; i < 15; i++) {
+        const obj = document.createElement('div');
+        obj.className = 'screensaver-object';
+        obj.textContent = symbols[i % symbols.length];
+        obj.style.left = `${Math.random() * 90}%`;
+        obj.style.top = `${Math.random() * 90}%`;
+        obj.style.fontSize = `${20 + Math.random() * 30}px`;
+        obj.style.transform = `rotate(${Math.random() * 360}deg)`;
+        obj.dataset.vx = (0.3 + Math.random() * 0.7).toString();
+        obj.dataset.vy = (0.3 + Math.random() * 0.7).toString();
+        overlay.appendChild(obj);
+    }
+
+    function animate() {
+        const objects = overlay!.querySelectorAll('.screensaver-object');
+        objects.forEach(obj => {
+            const el = obj as HTMLElement;
+            let x = parseFloat(el.style.left) || 0;
+            let y = parseFloat(el.style.top) || 0;
+            let vx = parseFloat(el.dataset.vx || '0.5');
+            let vy = parseFloat(el.dataset.vy || '0.5');
+
+            x += vx;
+            y += vy;
+
+            if (x > 92 || x < 0) { vx = -vx; x += vx * 2; }
+            if (y > 92 || y < 0) { vy = -vy; y += vy * 2; }
+
+            el.style.left = `${x}%`;
+            el.style.top = `${y}%`;
+            el.dataset.vx = vx.toString();
+            el.dataset.vy = vy.toString();
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+}
+
+function deactivateScreensaver() {
+    const overlay = document.getElementById('screensaver');
+    if (!overlay || !overlay.classList.contains('active')) return;
+    overlay.classList.remove('active');
+    overlay.innerHTML = '';
+    startScreensaverTimer();
+}
+
+// Track user activity for screensaver
+['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll'].forEach(event => {
+    document.addEventListener(event, deactivateScreensaver);
+});
+
+// ============ Blog / Articles ============
+const blogPosts = [
+    {
+        title: 'Building a Retro OS-Style Portfolio with TypeScript',
+        date: 'June 2026',
+        excerpt: 'How I built an interactive macOS-themed portfolio with a boot sequence, window manager, dock, and retro CRT effects — all in vanilla TypeScript and CSS.',
+        content: `
+            <h2>Building a Retro OS-Style Portfolio</h2>
+            <p>When I set out to rebuild my portfolio, I wanted something that stood out — not just another static page with cards and links. I decided to build it as a retro operating system, complete with a boot sequence, draggable windows, and a functional dock.</p>
+            <h3>Tech Stack</h3>
+            <p>The entire project is built with TypeScript, vanilla CSS, and Vite as the bundler. No React, no Vue — just pure DOM manipulation. This keeps the bundle tiny (~46KB gzipped) and gives full control over every pixel.</p>
+            <h3>Key Challenges</h3>
+            <p>The CRT monitor effect was the trickiest part. It uses layered CSS gradients for scanlines, radial gradients for screen curvature, and a subtle flicker animation. Getting the boot sequence to feel authentic while staying snappy took careful timing orchestration with async/await.</p>
+            <p>The window manager supports dragging, resizing, minimize/maximize, and z-index stacking — all in about 100 lines of TypeScript.</p>
+        `
+    },
+    {
+        title: 'ADHD Detection with XGBoost and FLAML',
+        date: 'May 2025',
+        excerpt: 'Published research on a dual-model framework for ADHD prediction using multimodal data fusion, achieving AUC scores of 0.84.',
+        content: `
+            <h2>ADHD Detection with XGBoost and FLAML</h2>
+            <p>This paper presents a machine learning architecture that predicts ADHD and biological sex from multimodal inputs. The framework uses XGBoost for tabular features and FLAML for automated model selection.</p>
+            <p>The model achieved an AUC of 0.84 for ADHD prediction and 0.77 for gender classification — competitive results that led to publication in MDPI's Computer Sciences & Mathematics Forum.</p>
+            <p><strong>Key Findings:</strong> Combining imaging-derived features with automated model selection yields more robust ADHD detection than single-model approaches.</p>
+        `
+    },
+    {
+        title: 'Alzheimer\'s Detection Using Deep Learning',
+        date: 'April 2025',
+        excerpt: 'Comparative analysis of CNN architectures for multi-class Alzheimer\'s classification using brain MRI scans.',
+        content: `
+            <h2>Alzheimer's Detection Using Deep Learning</h2>
+            <p>This study compares six deep learning architectures — CNN, VGG16, ResNet50, DenseNet201, InceptionV3, and EfficientNet-B1 — for stage-wise Alzheimer's disease classification.</p>
+            <p>The key insight: carefully tuned 2D CNN architectures are sufficient for accurate multi-class classification from MRI scans, challenging the assumption that deeper models always perform better.</p>
+        `
+    },
+    {
+        title: 'Knowledge Graph-Based RAG for Generative AI',
+        date: 'March 2025',
+        excerpt: 'Building a Knowledge Graph-based Retrieval Augmented Generation (RAG) assistant for improved contextual AI responses.',
+        content: `
+            <h2>Knowledge Graph-Based RAG Assistant</h2>
+            <p>Retrieval Augmented Generation (RAG) is powerful, but most implementations use flat vector search. I built a system that integrates Knowledge Graphs to provide structured context, significantly improving the relevance of AI-generated responses.</p>
+            <p>The KG acts as a semantic backbone, ensuring the model retrieves conceptually related information even when exact keywords don't match.</p>
+        `
+    }
+];
+
+function openBlog() {
+    let html = '<div class="blog-list">';
+    blogPosts.forEach((post, i) => {
+        html += `
+            <div class="blog-post" data-index="${i}">
+                <h3>${post.title}</h3>
+                <div class="blog-meta">${post.date}</div>
+                <div class="blog-excerpt">${post.excerpt}</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+
+    createWindow('Blog / Articles', html, 520, 450);
+
+    setTimeout(() => {
+        document.querySelectorAll('.blog-post').forEach(el => {
+            el.addEventListener('click', () => {
+                const idx = parseInt((el as HTMLElement).getAttribute('data-index') || '0');
+                const post = blogPosts[idx];
+                if (post) {
+                    createWindow(post.title, `<div class="content-page">${post.content}</div>`, 550, 500);
+                }
+            });
+        });
+    }, 100);
+}
+
+// ============ Analytics ============
+function trackPageView() {
+    try {
+        const data = {
+            url: window.location.href,
+            referrer: document.referrer || '(direct)',
+            timestamp: new Date().toISOString(),
+            screen: `${screen.width}x${screen.height}`,
+            userAgent: navigator.userAgent.slice(0, 100),
+        };
+        const views = JSON.parse(localStorage.getItem('page-views') || '[]');
+        views.push(data);
+        if (views.length > 100) views.shift();
+        localStorage.setItem('page-views', JSON.stringify(views));
+    } catch {
+        // analytics failure should not break the app
+    }
+}
+
 // Icon Click Handlers (Consolidated to Dock)
 document.querySelectorAll('.dock-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -1312,6 +1830,11 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'terminal') {
             openTerminal();
+            return;
+        }
+
+        if (id === 'blog') {
+            openBlog();
             return;
         }
 

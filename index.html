@@ -38,6 +38,8 @@
             <span class="menu-item">Help</span>
           </div>
           <div class="top-bar-right">
+            <span class="dark-mode-toggle" id="dark-mode-toggle" title="Toggle Dark Mode">☀️</span>
+            <span class="menu-item" id="search-toggle" title="Search">🔍</span>
             <span id="current-time">00:00</span>
           </div>
         </div>
@@ -88,11 +90,24 @@
             <img src="./img/Trash.png" alt="Trash" />
             <span class="tooltip">Trash</span>
           </div>
+          <div class="dock-item" id="blog" data-label="Blog" draggable="true">
+            <img src="./img/files33.png" alt="Blog" />
+            <span class="tooltip">Blog</span>
+          </div>
           <div class="dock-item" id="menu" data-label="Menu" draggable="true">
             <img src="./img/nuke.png" alt="Menu" />
             <span class="tooltip">Menu</span>
           </div>
         </div>
+
+        <!-- Notifications -->
+        <div id="notification-container"></div>
+
+        <!-- Taskbar (minimized window restore) -->
+        <div id="taskbar" class="taskbar hidden"></div>
+
+        <!-- Screensaver -->
+        <div id="screensaver" class="screensaver-overlay"></div>
 
         <!-- Window Manager Container -->
         <div id="window-container"></div>
