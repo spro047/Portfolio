@@ -59,6 +59,8 @@ async function addTerminalLine(message: string, statusType?: string) {
 }
 
 async function runBootSequence() {
+    // Enable CRT flicker effect during boot
+    monitorScreen?.classList.add('boot-anim');
     // Show Logo first
     const logoDiv = document.createElement('pre');
     logoDiv.className = 'ascii-logo';
@@ -94,6 +96,8 @@ async function runBootSequence() {
 }
 
 function transitionToDesktop() {
+    // Stop CRT flicker effect — no longer needed on desktop
+    monitorScreen?.classList.remove('boot-anim');
     bootTerminal!.classList.add('hidden');
     desktop!.classList.remove('hidden');
     updateClock();
@@ -101,15 +105,17 @@ function transitionToDesktop() {
 
     // Auto-open This PC window
     const thisPCContent = `
-        <p><strong>Navigation Guide:</strong></p>
-        <ul style="padding-left: 20px; margin-top: 10px;">
-          <li><strong>This PC:</strong> Navigate the system</li>
-          <li><strong>Files:</strong> Browse folders & change wallpapers</li>
-          <li><strong>Resume:</strong> View professional background</li>
-          <li><strong>GitHub:</strong> Check projects</li>
-          <li><strong>Research:</strong> Scientific contributions</li>
-          <li><strong>Trash:</strong> Where bugs go</li>
-        </ul>
+        <div class="content-page">
+          <p><strong>Navigation Guide:</strong></p>
+          <ul style="padding-left: 20px; margin-top: 10px;">
+            <li><strong>This PC:</strong> Navigate the system</li>
+            <li><strong>Files:</strong> Browse folders & change wallpapers</li>
+            <li><strong>GitHub:</strong> Check projects</li>
+            <li><strong>Resume:</strong> View professional background</li>
+            <li><strong>Research:</strong> Scientific contributions</li>
+            <li><strong>Trash:</strong> Where bugs go</li>
+          </ul>
+        </div>
       `;
     createWindow('This PC', thisPCContent);
 }
@@ -259,7 +265,7 @@ function openWallpaperFolder() {
             </div>
         `;
     });
-    html += '</div><p style="text-align:center; font-size:10px; margin-top:10px;">Double-click an image to set as wallpaper</p>';
+    html += '</div><p class="wallpaper-hint">Double-click an image to set as wallpaper</p>';
 
     createWindow('Wallpaper', html);
 
@@ -327,12 +333,12 @@ function openPaintsFolder() {
 
     let html = '<div class="file-grid">';
     if (paintNames.length === 0) {
-        html += '<p style="text-align:center; width:100%; grid-column: 1/-1; padding: 20px;">No saved paints found.</p>';
+        html += '<p class="empty-state">No saved paints found.</p>';
     } else {
         paintNames.forEach(name => {
             html += `
                 <div class="file-item paint-file-item" data-name="${name}">
-                    <img src="${savedPaints[name]}" style="width:48px; height:48px; object-fit:cover; border:1px solid #000;" />
+                    <img src="${savedPaints[name]}" class="paint-thumb" />
                     <span class="file-label">${name}.png</span>
                 </div>
             `;
@@ -385,9 +391,9 @@ function openProjectsFolder() {
                 const name = item.getAttribute('data-name');
                 const desc = decodeURIComponent(item.getAttribute('data-desc') || '');
                 createWindow(name!, `
-                    <div style="font-family: 'Inter', sans-serif; padding: 10px; color: #000;">
-                        <h2 style="margin-bottom: 15px; border-bottom: 2px solid #000; font-weight: 800; text-transform: uppercase; font-size: 18px;">${name}</h2>
-                        <p style="line-height: 1.6; font-size: 14px; text-align: justify;">${desc}</p>
+                    <div class="project-detail">
+                        <h2>${name}</h2>
+                        <p>${desc}</p>
                     </div>
                 `, 500, 400);
             });
@@ -407,16 +413,16 @@ function openPaint() {
             </div>
             <div class="paint-main">
                 <div class="paint-toolbar">
-                    <div class="paint-tool active" data-tool="pencil" title="Pencil">✎</div>
-                    <div class="paint-tool" data-tool="brush" title="Brush">🖌</div>
-                    <div class="paint-tool" data-tool="eraser" title="Eraser">⌫</div>
-                    <div class="paint-tool" data-tool="line" title="Line">╱</div>
-                    <div class="paint-tool" data-tool="rect" title="Rectangle">□</div>
-                    <div class="paint-tool" data-tool="ellipse" title="Ellipse">○</div>
-                    <div class="paint-tool" data-tool="picker" title="Color Picker">⚗</div>
-                    <div class="paint-tool" data-tool="clear" title="Clear Canvas">⊗</div>
-                    <div class="paint-tool" data-tool="undo" title="Undo">⟲</div>
-                    <div class="paint-tool" data-tool="redo" title="Redo">⟳</div>
+                    <div class="paint-tool active" data-tool="pencil" title="Pencil">&#9998;</div>
+                    <div class="paint-tool" data-tool="brush" title="Brush">&#9997;</div>
+                    <div class="paint-tool" data-tool="eraser" title="Eraser">&#9003;</div>
+                    <div class="paint-tool" data-tool="line" title="Line">&#9587;</div>
+                    <div class="paint-tool" data-tool="rect" title="Rectangle">&#9634;</div>
+                    <div class="paint-tool" data-tool="ellipse" title="Ellipse">&#9711;</div>
+                    <div class="paint-tool" data-tool="picker" title="Color Picker">&#9678;</div>
+                    <div class="paint-tool" data-tool="clear" title="Clear Canvas">&#8855;</div>
+                    <div class="paint-tool" data-tool="undo" title="Undo">&#8634;</div>
+                    <div class="paint-tool" data-tool="redo" title="Redo">&#8635;</div>
                 </div>
                 <div class="paint-canvas-area">
                     <canvas class="paint-canvas" id="paint-canvas" width="600" height="400"></canvas>
@@ -812,113 +818,218 @@ function openFlappyBird() {
 }
 
 function openCalculator() {
+    const calcId = `calc-${Date.now()}`;
     const html = `
-        <div class="calculator">
+        <div class="calculator" id="${calcId}">
             <div class="calc-display" id="calc-display">0</div>
-            <div class="calc-buttons">
-                <!-- Row 1: Clear and Divide -->
-                <div class="calc-btn btn-red" style="grid-column: span 3;" onclick="window.calcClear()">C</div>
-                <div class="calc-btn btn-orange" onclick="window.calcOp('/')">/</div>
-                
-                <!-- Row 2: 7, 8, 9, Multiply -->
-                <div class="calc-btn btn-grey" onclick="window.calcNum('7')">7</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('8')">8</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('9')">9</div>
-                <div class="calc-btn btn-orange" onclick="window.calcOp('*')">×</div>
-                
-                <!-- Row 3: 4, 5, 6, Subtract -->
-                <div class="calc-btn btn-grey" onclick="window.calcNum('4')">4</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('5')">5</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('6')">6</div>
-                <div class="calc-btn btn-orange" onclick="window.calcOp('-')">-</div>
-                
-                <!-- Row 4: 1, 2, 3, Add -->
-                <div class="calc-btn btn-grey" onclick="window.calcNum('1')">1</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('2')">2</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('3')">3</div>
-                <div class="calc-btn btn-orange" onclick="window.calcOp('+')">+</div>
-                
-                <!-- Row 5: 0, Dot, Equal -->
-                <div class="calc-btn btn-grey" onclick="window.calcNum('0')">0</div>
-                <div class="calc-btn btn-grey" onclick="window.calcNum('.')">.</div>
-                <div class="calc-btn btn-green" style="grid-column: span 2;" onclick="window.calcEqual()">=</div>
+            <div class="calc-buttons" data-calc>
+                <div class="calc-btn btn-red calc-clear" style="grid-column: span 3;">C</div>
+                <div class="calc-btn btn-orange calc-op" data-op="/">/</div>
+                <div class="calc-btn btn-grey calc-num" data-num="7">7</div>
+                <div class="calc-btn btn-grey calc-num" data-num="8">8</div>
+                <div class="calc-btn btn-grey calc-num" data-num="9">9</div>
+                <div class="calc-btn btn-orange calc-op" data-op="*">&times;</div>
+                <div class="calc-btn btn-grey calc-num" data-num="4">4</div>
+                <div class="calc-btn btn-grey calc-num" data-num="5">5</div>
+                <div class="calc-btn btn-grey calc-num" data-num="6">6</div>
+                <div class="calc-btn btn-orange calc-op" data-op="-">-</div>
+                <div class="calc-btn btn-grey calc-num" data-num="1">1</div>
+                <div class="calc-btn btn-grey calc-num" data-num="2">2</div>
+                <div class="calc-btn btn-grey calc-num" data-num="3">3</div>
+                <div class="calc-btn btn-orange calc-op" data-op="+">+</div>
+                <div class="calc-btn btn-grey calc-num" data-num="0">0</div>
+                <div class="calc-btn btn-grey calc-num" data-num=".">.</div>
+                <div class="calc-btn btn-green calc-eq" style="grid-column: span 2;">=</div>
             </div>
         </div>
     `;
 
     createWindow('Calculator', html, 320, 480);
 
-    // Calculator Logic
-    let currentInput = '0';
-    let previousInput = '';
-    let operation: string | null = null;
-    let shouldResetScreen = false;
+    // Calculator Logic — uses event delegation, no global scope pollution
+    setTimeout(() => {
+        const container = document.getElementById(calcId);
+        if (!container) return;
 
-    const updateDisplay = () => {
-        const display = document.getElementById('calc-display');
-        if (!display) return;
+        let currentInput = '0';
+        let previousInput = '';
+        let operation: string | null = null;
+        let shouldResetScreen = false;
 
-        let displayText = '';
-        if (previousInput) {
-            displayText = previousInput + ' ' + (operation || '');
-            if (!shouldResetScreen) {
-                displayText += ' ' + currentInput;
+        const display = container.querySelector('#calc-display') as HTMLElement;
+
+        const updateDisplay = () => {
+            let displayText = '';
+            if (previousInput) {
+                displayText = previousInput + ' ' + (operation || '');
+                if (!shouldResetScreen) {
+                    displayText += ' ' + currentInput;
+                }
+            } else {
+                displayText = currentInput;
             }
-        } else {
-            displayText = currentInput;
+            display.textContent = displayText || '0';
+        };
+
+        const btnGrid = container.querySelector('[data-calc]') as HTMLElement;
+        btnGrid.addEventListener('click', (e) => {
+            const btn = (e.target as HTMLElement).closest('[class*="calc-"]') as HTMLElement;
+            if (!btn) return;
+
+            if (btn.classList.contains('calc-num')) {
+                const num = btn.getAttribute('data-num')!;
+                if (currentInput === '0' || shouldResetScreen) {
+                    currentInput = num;
+                    shouldResetScreen = false;
+                } else {
+                    currentInput += num;
+                }
+                updateDisplay();
+            } else if (btn.classList.contains('calc-op')) {
+                const op = btn.getAttribute('data-op')!;
+                if (operation !== null && !shouldResetScreen) {
+                    calculate();
+                }
+                previousInput = currentInput;
+                operation = op;
+                shouldResetScreen = true;
+                updateDisplay();
+            } else if (btn.classList.contains('calc-clear')) {
+                currentInput = '0';
+                previousInput = '';
+                operation = null;
+                shouldResetScreen = false;
+                updateDisplay();
+            } else if (btn.classList.contains('calc-eq')) {
+                calculate();
+            }
+        });
+
+        const calculate = () => {
+            if (operation === null || shouldResetScreen) return;
+            let result: number;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            switch (operation) {
+                case '+': result = prev + current; break;
+                case '-': result = prev - current; break;
+                case '*': result = prev * current; break;
+                case '/': result = prev / current; break;
+                default: return;
+            }
+
+            currentInput = result.toString();
+            previousInput = '';
+            operation = null;
+            shouldResetScreen = true;
+            updateDisplay();
+        };
+    }, 100);
+}
+
+function openContactForm() {
+    const formId = 'contact-form-' + Date.now();
+
+    const html = `
+        <div class="contact-form">
+            <div style="margin-bottom: 16px;">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#333;">Name</label>
+                <input type="text" id="${formId}-name" class="contact-input" placeholder="Your name" required />
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#333;">Email</label>
+                <input type="email" id="${formId}-email" class="contact-input" placeholder="you@example.com" required />
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#333;">Subject</label>
+                <input type="text" id="${formId}-subject" class="contact-input" placeholder="What's this about?" />
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#333;">Message</label>
+                <textarea id="${formId}-message" class="contact-textarea" placeholder="Write your message..." required></textarea>
+            </div>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button class="contact-btn contact-btn-cancel" id="${formId}-cancel">Cancel</button>
+                <button class="contact-btn contact-btn-send" id="${formId}-send">Send</button>
+            </div>
+            <div id="${formId}-status" class="contact-status hidden"></div>
+        </div>
+    `;
+
+    createWindow('Contact Me', html, 420, 440);
+
+    // Wire up the form after a short delay so DOM is rendered
+    setTimeout(() => {
+        const sendBtn = document.getElementById(`${formId}-send`);
+        const cancelBtn = document.getElementById(`${formId}-cancel`);
+        const statusEl = document.getElementById(`${formId}-status`);
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                const win = cancelBtn.closest('.window');
+                if (win) win.remove();
+            });
         }
 
-        display.textContent = displayText || '0';
-    };
+        if (sendBtn) {
+            sendBtn.addEventListener('click', async () => {
+                const name = (document.getElementById(`${formId}-name`) as HTMLInputElement)?.value.trim();
+                const email = (document.getElementById(`${formId}-email`) as HTMLInputElement)?.value.trim();
+                const subject = (document.getElementById(`${formId}-subject`) as HTMLInputElement)?.value.trim();
+                const message = (document.getElementById(`${formId}-message`) as HTMLTextAreaElement)?.value.trim();
 
-    (window as any).calcNum = (num: string) => {
-        if (currentInput === '0' || shouldResetScreen) {
-            currentInput = num;
-            shouldResetScreen = false;
-        } else {
-            currentInput += num;
+                if (!name || name.length < 2) {
+                    if (statusEl) { statusEl.textContent = 'Please enter your name (min 2 characters).'; statusEl.className = 'contact-status contact-error'; }
+                    return;
+                }
+                if (!email || !email.includes('@')) {
+                    if (statusEl) { statusEl.textContent = 'Please enter a valid email address.'; statusEl.className = 'contact-status contact-error'; }
+                    return;
+                }
+                if (!message || message.length < 10) {
+                    if (statusEl) { statusEl.textContent = 'Please write a message (min 10 characters).'; statusEl.className = 'contact-status contact-error'; }
+                    return;
+                }
+
+                sendBtn.textContent = 'Sending...';
+                (sendBtn as HTMLButtonElement).disabled = true;
+
+                try {
+                    const apiUrl = '/api/contact';
+                    const res = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name, email, subject, message }),
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        if (statusEl) {
+                            statusEl.textContent = data.message || 'Message sent!';
+                            statusEl.className = 'contact-status contact-success';
+                        }
+                        sendBtn.textContent = 'Sent!';
+                        document.querySelectorAll(`[id^="${formId}"]`).forEach(el => {
+                            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                                (el as HTMLInputElement).value = '';
+                            }
+                        });
+                    } else {
+                        const detail = data.details ? data.details.join(', ') : data.error || 'Something went wrong.';
+                        if (statusEl) { statusEl.textContent = detail; statusEl.className = 'contact-status contact-error'; }
+                        sendBtn.textContent = 'Send';
+                        (sendBtn as HTMLButtonElement).disabled = false;
+                    }
+                } catch (err) {
+                    if (statusEl) { statusEl.textContent = 'Network error. Please try again later.'; statusEl.className = 'contact-status contact-error'; }
+                    sendBtn.textContent = 'Send';
+                    (sendBtn as HTMLButtonElement).disabled = false;
+                }
+            });
         }
-        updateDisplay();
-    };
-
-    (window as any).calcOp = (op: string) => {
-        if (operation !== null && !shouldResetScreen) {
-            (window as any).calcEqual();
-        }
-        previousInput = currentInput;
-        operation = op;
-        shouldResetScreen = true;
-        updateDisplay();
-    };
-
-    (window as any).calcClear = () => {
-        currentInput = '0';
-        previousInput = '';
-        operation = null;
-        shouldResetScreen = false;
-        updateDisplay();
-    };
-
-    (window as any).calcEqual = () => {
-        if (operation === null || shouldResetScreen) return;
-        let result: number;
-        const prev = parseFloat(previousInput);
-        const current = parseFloat(currentInput);
-
-        switch (operation) {
-            case '+': result = prev + current; break;
-            case '-': result = prev - current; break;
-            case '*': result = prev * current; break;
-            case '/': result = prev / current; break;
-            default: return;
-        }
-
-        currentInput = result.toString();
-        previousInput = '';
-        operation = null;
-        shouldResetScreen = true;
-        updateDisplay();
-    };
+    }, 50);
 }
 
 function openMenuWindow() {
@@ -1006,86 +1117,93 @@ document.querySelectorAll('.dock-item').forEach(item => {
             return;
         }
 
+        if (id === 'contact') {
+            openContactForm();
+            return;
+        }
+
         let content = 'Content Will be added here';
         if (id === 'this-pc') {
             content = `
-        <p><strong>Navigation Guide:</strong></p>
-        <ul style="padding-left: 20px; margin-top: 10px;">
-          <li><strong>This PC:</strong> Navigate the system</li>
-          <li><strong>Files:</strong> Browse folders & change wallpapers</li>
-          <li><strong>Resume:</strong> View professional background</li>
-          <li><strong>GitHub:</strong> Check projects</li>
-          <li><strong>Research:</strong> Scientific contributions</li>
-          <li><strong>Trash:</strong> Where bugs go</li>
-        </ul>
+        <div class="content-page">
+          <p><strong>Navigation Guide:</strong></p>
+          <ul style="padding-left: 20px; margin-top: 10px;">
+            <li><strong>This PC:</strong> Navigate the system</li>
+            <li><strong>Files:</strong> Browse folders & change wallpapers</li>
+            <li><strong>Resume:</strong> View professional background</li>
+            <li><strong>GitHub:</strong> Check projects</li>
+            <li><strong>Research:</strong> Scientific contributions</li>
+            <li><strong>Trash:</strong> Where bugs go</li>
+          </ul>
+        </div>
       `;
         }
 
         if (id === 'resume') {
             content = `
-                <div style="font-family: 'Inter', sans-serif; color: #000; line-height: 1.4;">
-                    <header style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px;">
-                        <h1 style="font-size: 24px; margin: 0; font-weight: 800;">Shashank Shetgeri</h1>
-                        <p style="font-size: 11px; margin: 5px 0;">India • shashankshetgeri@gmail.com • +91 9480128298</p>
-                        <p style="font-size: 11px; margin: 0;">linkedin.com/in/shashank-shetgeri • github.com/spro047</p>
+                <div class="content-page">
+                    <header class="resume-header">
+                        <h1 class="resume-name">Shashank Shetgeri</h1>
+                        <p class="resume-detail">India • shashankshetgeri@gmail.com • +91 9480128298</p>
+                        <p class="resume-detail">linkedin.com/in/shashank-shetgeri • github.com/spro047</p>
                     </header>
 
-                    <section style="margin-bottom: 15px;">
-                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Education</h2>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Education</h2>
+                        <div class="resume-row">
                             <span>KLE Technological University, Dr. M. S. Sheshgiri Campus</span>
                             <span>Expected Apr 2027</span>
                         </div>
-                        <div style="font-size: 12px; margin-bottom: 5px;">BE in Computer Science and Engineering</div>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                        <div class="resume-sub">BE in Computer Science and Engineering</div>
+                        <div class="resume-row">
                             <span>KLS's Shri Vasantrao Polytechnic</span>
                             <span>Apr 2024</span>
                         </div>
-                        <div style="font-size: 12px;">Diploma in Computer Science and Engineering</div>
+                        <div class="resume-sub">Diploma in Computer Science and Engineering</div>
                     </section>
 
-                    <section style="margin-bottom: 15px;">
-                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Experience</h2>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Experience</h2>
+                        <div class="resume-row">
                             <span>Student Intern, Eyesec Cyber Security Solutions</span>
                             <span>Jan 2023 – July 2023</span>
                         </div>
-                        <ul style="font-size: 11px; margin: 3px 0 8px 15px;">
+                        <ul class="resume-list">
                             <li>Focused on Data Science, AIML, and Full Stack technologies.</li>
                         </ul>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                        <div class="resume-row">
                             <span>Software Intern (Cyber Security), Eyesec</span>
                             <span>Jan 2024 – Apr 2024</span>
                         </div>
-                        <ul style="font-size: 11px; margin: 3px 0 0 15px;">
+                        <ul class="resume-list">
                             <li>Practical exposure to threat modeling and application-level security.</li>
                         </ul>
                     </section>
 
-                    <section style="margin-bottom: 15px;">
-                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Projects</h2>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Projects</h2>
+                        <div class="resume-row">
                             <span>Gender-Aware ADHD Detection Framework</span>
                             <span>WiDS Datathon 2025</span>
                         </div>
-                        <ul style="font-size: 11px; margin: 3px 0 8px 15px;">
+                        <ul class="resume-list">
                             <li>Led a team of 6 to develop a dual-model ADHD prediction system using brain connectomes.</li>
                             <li>Gender classifier (XGBoost): AUC 0.77; ADHD predictor (FLAML): AUC 0.84.</li>
                         </ul>
-                        <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 700;">
+                        <div class="resume-row">
                             <span>Automated XSS Vulnerability Scanner</span>
                             <span>Cyber Security Toolkit</span>
                         </div>
-                        <ul style="font-size: 11px; margin: 3px 0 0 15px;">
+                        <ul class="resume-list">
                             <li>Developed a GUI-based tool that automates XSS detection in web applications.</li>
                             <li>Engineered payload injection using BeautifulSoup and Requests.</li>
                         </ul>
                     </section>
 
-                    <section style="margin-bottom: 15px;">
-                        <h2 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid #000; margin-bottom: 8px; font-weight: 800;">Technologies</h2>
-                        <p style="font-size: 11px; margin: 0;"><strong>Languages:</strong> Python, SQL, JavaScript, C, Java, HTML/CSS, PHP</p>
-                        <p style="font-size: 11px; margin: 3px 0 0 0;"><strong>Tools:</strong> XGBoost, FLAML, Pandas, NumPy, Matplotlib, Scikit-learn, Git, Bootstrap</p>
+                    <section class="resume-section">
+                        <h2 class="resume-section-title">Technologies</h2>
+                        <p class="resume-tech-label"><strong>Languages:</strong> Python, SQL, JavaScript, C, Java, HTML/CSS, PHP</p>
+                        <p class="resume-tech-label"><strong>Tools:</strong> XGBoost, FLAML, Pandas, NumPy, Matplotlib, Scikit-learn, Git, Bootstrap</p>
                     </section>
                 </div>
             `;
@@ -1095,18 +1213,18 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'research') {
             content = `
-                <div style="font-family: 'Inter', sans-serif;">
-                    <div style="margin-bottom: 25px; border-bottom: 2px solid #000; padding-bottom: 15px;">
-                        <h2 style="font-size: 18px; color: #000; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Gender-Aware ADHD Detection Framework Combining XGBoost and FLAML Models</h2>
-                        <p style="font-size: 14px; color: #333; margin-bottom: 12px; line-height: 1.6;"><strong>Abstract:</strong> A machine learning architecture is introduced to predict attention deficit hyperactivity disorder (ADHD) and biological sex from multimodal inputs. The problem sidesteps the clinical task of early ADHD detection and adds prediction of sex as a meta-feature to enhance robustness. Findings show that combining imaging-derived features and automated model selection yields a robust method of ADHD detection, underscoring the utility of multimodal data fusion in neuropsychiatric studies.</p>
-                        <p style="font-size: 13px; color: #555; margin-bottom: 12px;"><strong>Keywords:</strong> ADHD prediction; brain connectome; XGBoost; FLAML; machine learning</p>
-                        <a href="https://www.mdpi.com/2813-0324/12/1/6" target="_blank" style="display: inline-block; background: #000; color: #fff; padding: 6px 12px; text-decoration: none; font-size: 12px; font-weight: bold; border-radius: 4px;">READ PAPER →</a>
+                <div class="content-page">
+                    <div class="research-paper">
+                        <h2 class="research-title">Gender-Aware ADHD Detection Framework Combining XGBoost and FLAML Models</h2>
+                        <p class="research-abstract"><strong>Abstract:</strong> A machine learning architecture is introduced to predict attention deficit hyperactivity disorder (ADHD) and biological sex from multimodal inputs. The problem sidesteps the clinical task of early ADHD detection and adds prediction of sex as a meta-feature to enhance robustness. Findings show that combining imaging-derived features and automated model selection yields a robust method of ADHD detection, underscoring the utility of multimodal data fusion in neuropsychiatric studies.</p>
+                        <p class="research-keywords"><strong>Keywords:</strong> ADHD prediction; brain connectome; XGBoost; FLAML; machine learning</p>
+                        <a href="https://www.mdpi.com/2813-0324/12/1/6" target="_blank" class="research-link">READ PAPER →</a>
                     </div>
 
-                    <div>
-                        <h2 style="font-size: 18px; color: #000; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">Comparative Deep Neural Study For Stage-Wise Alzheimer’s Disease Detection</h2>
-                        <p style="font-size: 14px; color: #333; margin-bottom: 12px; line-height: 1.6;"><strong>Abstract:</strong> Alzheimer's disease(AD) is a progressive neurological condition in which reliable recognition of disease stage is important for planning treatment and follow up. This study investigates four stages using structural brain MRI from an ADNI-based dataset. The results show that carefully tuned 2D CNN architectures are sufficient for accurate stage-wise AD classification from MRI.</p>
-                        <p style="font-size: 13px; color: #555;"><strong>Keywords:</strong> Alzheimer's disease(AD), ADNI, CNN, DenseNet201, VGG16, Multi-Class Classification.</p>
+                    <div class="research-paper">
+                        <h2 class="research-title">Comparative Deep Neural Study For Stage-Wise Alzheimer's Disease Detection</h2>
+                        <p class="research-abstract"><strong>Abstract:</strong> Alzheimer's disease(AD) is a progressive neurological condition in which reliable recognition of disease stage is important for planning treatment and follow up. This study investigates four stages using structural brain MRI from an ADNI-based dataset. The results show that carefully tuned 2D CNN architectures are sufficient for accurate stage-wise AD classification from MRI.</p>
+                        <p class="research-keywords"><strong>Keywords:</strong> Alzheimer's disease(AD), ADNI, CNN, DenseNet201, VGG16, Multi-Class Classification.</p>
                     </div>
                 </div>
             `;
@@ -1130,19 +1248,19 @@ document.querySelectorAll('.dock-item').forEach(item => {
             const daysInMonth = new Date(year, now.getMonth() + 1, 0).getDate();
 
             let calendarHtml = `
-                <div style="font-family: 'Inter', sans-serif; height: 100%; display: flex; flex-direction: column;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h2 style="margin: 0; font-weight: 800; color: #4285f4;">${month} ${year}</h2>
-                        <div style="background: #4285f4; color: #fff; padding: 4px 12px; border-radius: 4px; font-size: 12px; font-weight: bold;">Today</div>
+                <div class="calendar-widget">
+                    <div class="calendar-header">
+                        <h2>${month} ${year}</h2>
+                        <div class="calendar-badge">Today</div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: #eee; border: 1px solid #ddd;">
-                        ${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => `<div style="background: #f8f9fa; padding: 10px 0; text-align: center; font-size: 11px; font-weight: 700; color: #70757a;">${d}</div>`).join('')}
-                        ${Array(firstDay).fill(null).map(() => `<div style="background: #fff; height: 40px;"></div>`).join('')}
+                    <div class="calendar-grid">
+                        ${['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(d => `<div class="calendar-day-header">${d}</div>`).join('')}
+                        ${Array(firstDay).fill(null).map(() => `<div class="calendar-empty"></div>`).join('')}
                         ${Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
                 const isToday = day === today;
                 return `
-                                <div style="background: #fff; height: 40px; border: 1px solid #f1f3f4; padding: 4px; position: relative;">
-                                    <span style="font-size: 12px; ${isToday ? 'background: #4285f4; color: #fff; width: 22px; height: 22px; line-height: 22px; border-radius: 50%; display: inline-block; text-align: center;' : ''}">${day}</span>
+                                <div class="calendar-cell">
+                                    <span${isToday ? ' class="calendar-today"' : ''}>${day}</span>
                                 </div>
                             `;
             }).join('')}

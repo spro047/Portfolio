@@ -1,14 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
+  /* CRT Monitor */
   --monitor-bezel: #2c2c2c;
   --terminal-bg: #0c0c0c;
   --terminal-green: #00ff41;
-  --mac-bg: #e1e1e1;
-  --mac-border: #9b9b9b;
-  --mac-shadow: rgba(0, 0, 0, 0.2);
+
+  /* Mac OS 9 Platinum Palette */
+  --platinum-light: #d9d9d9;
+  --platinum-base: #c0c0c0;
+  --platinum-dark: #999999;
+  --platinum-highlight: #e8e8e8;
+  --mac-desktop: #297e9e;
+  --mac-titlebar-start: #4a80d4;
+  --mac-titlebar-end: #2159b0;
+  --mac-titlebar-text: #ffffff;
+  --mac-window-bg: #ffffff;
+  --mac-window-border: #666666;
+  --mac-menu-bg: #d4d4d4;
+  --mac-menu-text: #000000;
+  --mac-shadow: rgba(0, 0, 0, 0.35);
+  --mac-btn-face: #e8e8e8;
+  --mac-btn-shadow: #888888;
+  --mac-btn-dark: #666666;
+  --mac-btn-light: #f5f5f5;
+
+  /* Geometry */
   --header-height: 25px;
+  --window-border: 1px;
 }
 
 * {
@@ -62,30 +82,11 @@ body {
 }
 
 @keyframes flicker {
-  0% {
-    opacity: 0.99;
-  }
-
-  5% {
-    opacity: 0.97;
-  }
-
-  10% {
-    opacity: 0.99;
-  }
-
-  15% {
-    opacity: 0.98;
-  }
-
-  20% {
-    opacity: 0.99;
-  }
-
-  /* Subtle flicker */
-  100% {
-    opacity: 1;
-  }
+  0% { opacity: 0.995; }
+  10% { opacity: 0.988; }
+  20% { opacity: 0.995; }
+  30% { opacity: 0.992; }
+  100% { opacity: 1; }
 }
 
 .screen {
@@ -96,7 +97,11 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
-  animation: flicker 0.1s infinite;
+}
+
+/* Flicker only applies during boot sequence */
+.screen.boot-anim {
+  animation: flicker 0.15s infinite;
 }
 
 /* CRT Curve Effect Overlay */
@@ -209,10 +214,10 @@ body {
 .desktop {
   width: 100%;
   height: 100%;
-  background: #4ea898;
-  /* Teal from reference */
+  background: var(--mac-desktop);
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .hidden {
@@ -222,18 +227,18 @@ body {
 /* Top Bar */
 .top-bar {
   height: var(--header-height);
-  background: #fdfd96;
-  /* Pale yellow from reference */
+  background: var(--platinum-highlight);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 15px;
-  border-bottom: 2px solid #000;
-  font-size: 13px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--mac-window-border);
+  font-size: 12px;
   z-index: 100;
-  color: #000;
+  color: var(--mac-menu-text);
   font-family: 'Inter', sans-serif;
   font-weight: 600;
+  user-select: none;
 }
 
 .top-bar-left {
@@ -324,45 +329,57 @@ body {
 /* Windows */
 .window {
   position: absolute;
-  background: #fff;
-  border: 2px solid #000;
-  box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
+  background: var(--platinum-highlight);
+  border: 1px solid var(--mac-window-border);
+  box-shadow:
+    0 4px 16px var(--mac-shadow),
+    0 1px 3px rgba(0, 0, 0, 0.15);
   min-width: 350px;
   min-height: 250px;
   z-index: 10;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .window-header {
-  height: 30px;
-  background: #fff;
-  border-bottom: 2px solid #000;
+  height: 28px;
+  background: linear-gradient(135deg, var(--mac-titlebar-start), var(--mac-titlebar-end));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px;
+  padding: 0 8px;
   cursor: move;
+  user-select: none;
 }
 
 .window-controls {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  order: -1;
 }
 
 .control {
-  width: 14px;
-  height: 14px;
-  border: 2px solid #000;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: bold;
   cursor: pointer;
+  color: rgba(0, 0, 0, 0);
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+
+.control:hover {
+  color: rgba(0, 0, 0, 0.5);
 }
 
 .close {
   background: #ff5f56;
-  /* Mac close color */
 }
 
 .close::after {
@@ -371,22 +388,23 @@ body {
 
 .window-title {
   font-size: 12px;
-  font-weight: 800;
-  color: #000;
-  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--mac-titlebar-text);
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   pointer-events: none;
+  white-space: nowrap;
 }
 
-
 .window-content {
-  padding: 15px;
-  font-size: 14px;
+  padding: 16px;
+  font-size: 13px;
   color: #333;
-  height: calc(100% - 30px);
+  height: calc(100% - 28px);
   overflow-y: auto;
+  background: var(--mac-window-bg);
+  line-height: 1.5;
 }
 
 /* File Explorer Grid */
@@ -733,6 +751,344 @@ body {
   margin-top: 4px;
 }
 
+/* =============================================
+   Extracted Inline Styles — classes replace inline styles in main.ts
+   ============================================= */
+
+/* Content page base */
+.content-page {
+  font-family: 'Inter', sans-serif;
+  padding: 0;
+  color: #000;
+}
+
+/* Resume specific */
+.resume-section {
+  margin-bottom: 16px;
+}
+
+.resume-section-title {
+  font-size: 14px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #999;
+  margin-bottom: 8px;
+  font-weight: 700;
+  color: #222;
+  padding-bottom: 4px;
+}
+
+.resume-header {
+  text-align: center;
+  border-bottom: 2px solid #000;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.resume-name {
+  font-size: 22px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.resume-detail {
+  font-size: 11px;
+  margin: 4px 0;
+  color: #444;
+}
+
+.resume-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.resume-sub {
+  font-size: 12px;
+  margin-bottom: 4px;
+  color: #444;
+}
+
+.resume-list {
+  font-size: 11px;
+  margin: 3px 0 8px 16px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.resume-tech-label {
+  font-size: 11px;
+  margin: 0;
+}
+
+.resume-tech-label strong {
+  color: #000;
+}
+
+/* Research page */
+.research-paper {
+  margin-bottom: 24px;
+  border-bottom: 2px solid #000;
+  padding-bottom: 14px;
+}
+
+.research-title {
+  font-size: 15px;
+  color: #000;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.research-abstract {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+
+.research-keywords {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.research-link {
+  display: inline-block;
+  background: var(--mac-titlebar-start);
+  color: #fff;
+  padding: 6px 14px;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.research-link:hover {
+  background: var(--mac-titlebar-end);
+}
+
+/* Contact form */
+.contact-form {
+  font-family: 'Inter', sans-serif;
+  padding: 20px;
+  color: #000;
+}
+
+.contact-title {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-bottom: 2px solid #000;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.contact-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-label {
+  font-size: 12px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+  color: #444;
+}
+
+.contact-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--mac-window-border);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  background: #fff;
+  color: #000;
+  border-radius: 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.contact-input:focus {
+  outline: none;
+  border-color: var(--mac-titlebar-start);
+  box-shadow: 0 0 0 2px rgba(74, 128, 212, 0.2);
+}
+
+.contact-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--mac-window-border);
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+  resize: vertical;
+  background: #fff;
+  color: #000;
+  border-radius: 4px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+.contact-textarea:focus {
+  outline: none;
+  border-color: var(--mac-titlebar-start);
+  box-shadow: 0 0 0 2px rgba(74, 128, 212, 0.2);
+}
+
+.contact-submit {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+  border-radius: 4px;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.contact-submit:hover {
+  background: #333;
+}
+
+.contact-status {
+  font-size: 12px;
+  font-weight: 600;
+  min-height: 1.2em;
+}
+
+/* Project detail window */
+.project-detail {
+  font-family: 'Inter', sans-serif;
+  padding: 12px;
+  color: #000;
+}
+
+.project-detail h2 {
+  margin-bottom: 14px;
+  border-bottom: 2px solid #000;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 16px;
+  padding-bottom: 8px;
+}
+
+.project-detail p {
+  line-height: 1.6;
+  font-size: 13px;
+  text-align: justify;
+  color: #333;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  width: 100%;
+  grid-column: 1 / -1;
+  padding: 20px;
+  color: #888;
+  font-style: italic;
+}
+
+/* Wallpaper hint */
+.wallpaper-hint {
+  text-align: center;
+  font-size: 10px;
+  margin-top: 10px;
+  color: #888;
+}
+
+/* Calendar Widget */
+.calendar-widget {
+  font-family: 'Inter', sans-serif;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  color: #222;
+}
+
+.calendar-badge {
+  background: var(--mac-titlebar-start);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: #eee;
+  border: 1px solid #ddd;
+}
+
+.calendar-day-header {
+  background: #f8f9fa;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #70757a;
+}
+
+.calendar-cell {
+  background: #fff;
+  height: 40px;
+  border: 1px solid #f1f3f4;
+  padding: 4px;
+  position: relative;
+}
+
+.calendar-cell span {
+  font-size: 12px;
+}
+
+.calendar-today {
+  background: var(--mac-titlebar-start);
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: center;
+}
+
+.calendar-empty {
+  background: #fff;
+  height: 40px;
+}
+
+/* Paint thumbnail */
+.paint-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border: 1px solid #999;
+  border-radius: 2px;
+}
+
 /* Calculator Styles */
 .calculator {
   display: flex;
@@ -822,4 +1178,91 @@ body {
 
 .calc-empty {
   visibility: hidden;
+}
+
+/* Contact Form Styles */
+.contact-form {
+  padding: 8px 4px;
+}
+
+.contact-input,
+.contact-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  background: #fff;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.contact-input:focus,
+.contact-textarea:focus {
+  border-color: var(--mac-titlebar-start);
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+.contact-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contact-btn {
+  padding: 7px 20px;
+  border-radius: 4px;
+  border: 1px solid #888;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.contact-btn-send {
+  background: var(--mac-titlebar-start);
+  color: #fff;
+  border-color: var(--mac-titlebar-end);
+}
+
+.contact-btn-send:hover {
+  filter: brightness(1.1);
+}
+
+.contact-btn-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.contact-btn-cancel {
+  background: #e8e8e8;
+}
+
+.contact-btn-cancel:hover {
+  background: #d0d0d0;
+}
+
+.contact-status {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.contact-status.hidden {
+  display: none;
+}
+
+.contact-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.contact-error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
 }
