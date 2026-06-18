@@ -1147,73 +1147,16 @@ document.querySelectorAll('.dock-item').forEach(item => {
 
         if (id === 'resume') {
             content = `
-                <div class="content-page">
-                    <header class="resume-header">
-                        <h1 class="resume-name">Shashank Shetgeri</h1>
-                        <p class="resume-detail">India • shashankshetgeri@gmail.com • +91 9480128298</p>
-                        <p class="resume-detail">linkedin.com/in/shashank-shetgeri • github.com/spro047</p>
-                    </header>
-
-                    <section class="resume-section">
-                        <h2 class="resume-section-title">Education</h2>
-                        <div class="resume-row">
-                            <span>KLE Technological University, Dr. M. S. Sheshgiri Campus</span>
-                            <span>Expected Apr 2027</span>
-                        </div>
-                        <div class="resume-sub">BE in Computer Science and Engineering</div>
-                        <div class="resume-row">
-                            <span>KLS's Shri Vasantrao Polytechnic</span>
-                            <span>Apr 2024</span>
-                        </div>
-                        <div class="resume-sub">Diploma in Computer Science and Engineering</div>
-                    </section>
-
-                    <section class="resume-section">
-                        <h2 class="resume-section-title">Experience</h2>
-                        <div class="resume-row">
-                            <span>Student Intern, Eyesec Cyber Security Solutions</span>
-                            <span>Jan 2023 – July 2023</span>
-                        </div>
-                        <ul class="resume-list">
-                            <li>Focused on Data Science, AIML, and Full Stack technologies.</li>
-                        </ul>
-                        <div class="resume-row">
-                            <span>Software Intern (Cyber Security), Eyesec</span>
-                            <span>Jan 2024 – Apr 2024</span>
-                        </div>
-                        <ul class="resume-list">
-                            <li>Practical exposure to threat modeling and application-level security.</li>
-                        </ul>
-                    </section>
-
-                    <section class="resume-section">
-                        <h2 class="resume-section-title">Projects</h2>
-                        <div class="resume-row">
-                            <span>Gender-Aware ADHD Detection Framework</span>
-                            <span>WiDS Datathon 2025</span>
-                        </div>
-                        <ul class="resume-list">
-                            <li>Led a team of 6 to develop a dual-model ADHD prediction system using brain connectomes.</li>
-                            <li>Gender classifier (XGBoost): AUC 0.77; ADHD predictor (FLAML): AUC 0.84.</li>
-                        </ul>
-                        <div class="resume-row">
-                            <span>Automated XSS Vulnerability Scanner</span>
-                            <span>Cyber Security Toolkit</span>
-                        </div>
-                        <ul class="resume-list">
-                            <li>Developed a GUI-based tool that automates XSS detection in web applications.</li>
-                            <li>Engineered payload injection using BeautifulSoup and Requests.</li>
-                        </ul>
-                    </section>
-
-                    <section class="resume-section">
-                        <h2 class="resume-section-title">Technologies</h2>
-                        <p class="resume-tech-label"><strong>Languages:</strong> Python, SQL, JavaScript, C, Java, HTML/CSS, PHP</p>
-                        <p class="resume-tech-label"><strong>Tools:</strong> XGBoost, FLAML, Pandas, NumPy, Matplotlib, Scikit-learn, Git, Bootstrap</p>
-                    </section>
+                <div class="content-page" style="padding: 0; height: 100%;">
+                    <object data="./img/Resume.pdf" type="application/pdf" style="width: 100%; height: 100%; border: none; display: block;">
+                        <p style="padding: 20px; text-align: center;">
+                            Your browser doesn't support embedded PDFs.
+                            <a href="./img/Resume.pdf" target="_blank" style="color: #007bff;">Download Resume</a>
+                        </p>
+                    </object>
                 </div>
             `;
-            createWindow('Resume', content, 600, 650);
+            createWindow('Resume', content, 800, 700);
             return;
         }
 
