@@ -1186,7 +1186,7 @@ document.querySelectorAll('.dock-item').forEach(item => {
                 <div class="content-page">
                     <header class="resume-header">
                         <h1 class="resume-name">Shashank Shetgeri</h1>
-                        <p class="resume-detail">shashankshetgeri@gmail.com | 9480128298 | <a href="https://linkedin.com/in/shashank-shetgeri" target="_blank" style="color: #007bff;">LinkedIn</a> | <a href="https://github.com/spro047" target="_blank" style="color: #007bff;">GitHub</a> | Belgaum, Karnataka</p>
+                        <p class="resume-detail">shashankshetgeri@gmail.com | 9480128298 | <a href="https://www.linkedin.com/in/shashank-shetgeri-2434232b3/" target="_blank" style="color: #007bff;">LinkedIn</a> | <a href="https://github.com/spro047" target="_blank" style="color: #007bff;">GitHub</a> | Belgaum, Karnataka</p>
                     </header>
 
                     <section class="resume-section">
