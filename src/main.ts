@@ -1257,7 +1257,7 @@ document.querySelectorAll('.dock-item').forEach(item => {
                     </section>
                 </div>
             `;
-            createWindow('Resume', content, 600, 650);
+            createWindow('Resume', content, 500, 500);
             return;
         }
 
