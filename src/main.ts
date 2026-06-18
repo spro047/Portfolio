@@ -106,9 +106,9 @@ function transitionToDesktop() {
     // Auto-open This PC window
     const thisPCContent = `
         <div class="content-page">
-          <div style="margin-bottom: 16px; padding: 12px; background: #e8f0fe; border-radius: 6px;">
+          <div style="margin-bottom: 16px;">
             <h2 style="margin: 0 0 4px 0; font-size: 16px;">Hi, I'm Shashank 👋</h2>
-            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer passionate about building cool things.</p>
+            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer and this is my OS Based Portfolio</p>
           </div>
 
           <p><strong>How to use this OS Portfolio:</strong></p>
@@ -1139,9 +1139,9 @@ document.querySelectorAll('.dock-item').forEach(item => {
         if (id === 'this-pc') {
             content = `
         <div class="content-page">
-          <div style="margin-bottom: 16px; padding: 12px; background: #e8f0fe; border-radius: 6px;">
+          <div style="margin-bottom: 16px;">
             <h2 style="margin: 0 0 4px 0; font-size: 16px;">Hi, I'm Shashank 👋</h2>
-            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer passionate about building cool things.</p>
+            <p style="margin: 0; font-size: 13px; color: #333;">I'm a Software Developer and this is my OS Based Portfolio</p>
           </div>
 
           <p><strong>How to use this OS Portfolio:</strong></p>
