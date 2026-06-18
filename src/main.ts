@@ -242,10 +242,14 @@ function setDesktopWallpaper(url: string) {
     }
 }
 
-// Load saved wallpaper on start
+// Load saved wallpaper on start — default to wallpaper2
 const savedWallpaper = localStorage.getItem('desktop-wallpaper');
-if (savedWallpaper && desktop) {
-    desktop.style.backgroundImage = `url('${savedWallpaper}')`;
+const defaultWallpaper = './img/wallpapers/wallpaper2.png';
+if (desktop) {
+    desktop.style.backgroundImage = `url('${savedWallpaper || defaultWallpaper}')`;
+    if (!savedWallpaper) {
+        localStorage.setItem('desktop-wallpaper', defaultWallpaper);
+    }
 }
 
 function openWallpaperFolder() {
