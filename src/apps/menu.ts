@@ -1,5 +1,6 @@
 import { createWindow } from '../window-manager';
 import { openCalculator } from './calculator';
+import { openSnake } from './snake';
 
 export function openMenuWindow() {
     const dockItems = document.querySelectorAll('.dock-item');
@@ -45,6 +46,8 @@ export function openMenuWindow() {
 
                 if (id === 'calculator') {
                     openCalculator();
+                } else if (id === 'snake') {
+                    openSnake();
                 } else {
                     const dockItem = document.getElementById(id!);
                     if (dockItem) {
