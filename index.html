@@ -38,8 +38,8 @@
             <span class="menu-item">Help</span>
           </div>
           <div class="top-bar-right">
-            <span class="dark-mode-toggle" id="dark-mode-toggle" title="Toggle Dark Mode">☀️</span>
-            <span class="menu-item" id="search-toggle" title="Search">🔍</span>
+            <span class="dark-mode-toggle" id="dark-mode-toggle" title="Toggle Dark Mode"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="3" fill="currentColor"/><path d="M7 0v2M7 12v2M0 7h2M12 7h2M2 2l1.5 1.5M10.5 10.5L12 12M2 12l1.5-1.5M10.5 3.5L12 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+            <span class="menu-item" id="search-toggle" title="Search"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
             <span id="current-time">00:00</span>
           </div>
         </div>
@@ -78,12 +78,16 @@
             <img src="./img/flappy-bird_img.png" alt="Flappy Bird" />
             <span class="tooltip">Flappy Bird</span>
           </div>
+          <div class="dock-item" id="snake" data-label="Snake" draggable="true">
+            <img src="./img/flappy-bird_img.png" alt="Snake" />
+            <span class="tooltip">Snake</span>
+          </div>
           <div class="dock-item" id="contact" data-label="Contact" draggable="true">
             <img src="./img/ThisPC_img.png" alt="Contact" />
             <span class="tooltip">Contact</span>
           </div>
           <div class="dock-item" id="calendar" data-label="Calendar" draggable="true">
-            <img src="./img/calender1.png" alt="Calendar" />
+            <img src="./img/calendar1.png" alt="Calendar" />
             <span class="tooltip">Calendar</span>
           </div>
           <div class="dock-item" id="trash" data-label="Trash" draggable="true">
@@ -102,9 +106,6 @@
 
         <!-- Notifications -->
         <div id="notification-container"></div>
-
-        <!-- Taskbar (minimized window restore) -->
-        <div id="taskbar" class="taskbar hidden"></div>
 
         <!-- Screensaver -->
         <div id="screensaver" class="screensaver-overlay"></div>

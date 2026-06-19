@@ -4,6 +4,8 @@
 :root {
   /* CRT Monitor */
   --monitor-bezel: #2c2c2c;
+  --monitor-screen-bg: #000000;
+  --body-bg: #111111;
   --terminal-bg: #0c0c0c;
   --terminal-green: #00ff41;
 
@@ -26,6 +28,21 @@
   --mac-btn-dark: #666666;
   --mac-btn-light: #f5f5f5;
 
+  /* Window Controls */
+  --close-btn: #ff5f56;
+  --minimize-btn: #ffbd2e;
+  --maximize-btn: #28c940;
+
+  /* Typography */
+  --text-primary: #333333;
+  --text-secondary: #444444;
+  --text-muted: #666666;
+  --text-on-dark: #ffffff;
+
+  /* Borders */
+  --border-subtle: #cccccc;
+  --border-light: #808080;
+
   /* Geometry */
   --header-height: 25px;
   --window-border: 1px;
@@ -38,7 +55,7 @@
 }
 
 body {
-  background: #111;
+  background: var(--body-bg);
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -63,24 +80,6 @@ body {
   align-items: center;
 }
 
-.monitor-overlay::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  pointer-events: none;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%,
-      rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg,
-      rgba(255, 0, 0, 0.03),
-      rgba(0, 255, 0, 0.01),
-      rgba(0, 0, 255, 0.03));
-  background-size: 100% 4px, 3px 100%;
-  border-radius: 40px;
-  opacity: 0.3;
-}
-
 @keyframes flicker {
   0% { opacity: 0.995; }
   10% { opacity: 0.988; }
@@ -92,11 +91,11 @@ body {
 .screen {
   width: 100%;
   height: 100%;
-  background: #000;
+  background: var(--monitor-screen-bg);
   border-radius: 20px;
   position: relative;
   overflow: hidden;
-  box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
+  box-shadow: inset 0 0 50px var(--mac-shadow);
 }
 
 /* Flicker only applies during boot sequence */
@@ -136,7 +135,7 @@ body {
 .terminal {
   width: 100%;
   height: 100%;
-  background: #000;
+  background: var(--monitor-screen-bg);
   color: var(--terminal-green);
   font-family: 'VT323', monospace;
   padding: 40px;
@@ -164,7 +163,7 @@ body {
 }
 
 .status-ok {
-  color: #33ff33;
+  color: var(--terminal-green);
 }
 
 .status-info {
@@ -182,7 +181,7 @@ body {
 }
 
 .ascii-logo {
-  color: #33ff33;
+  color: var(--terminal-green);
   margin-bottom: 30px;
   font-size: 11px;
   line-height: 1.1;
@@ -241,7 +240,7 @@ body {
 
 .context-menu-item {
   padding: 8px 16px;
-  color: #e0e0e0;
+  color: var(--text-on-dark);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -282,6 +281,12 @@ body {
   align-items: center;
 }
 
+.top-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .apple-icon {
   font-size: 16px;
 }
@@ -294,7 +299,7 @@ body {
   transform: translateX(-50%);
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-  border: 2px solid #000;
+  border: 2px solid var(--mac-menu-text);
   height: 70px;
   display: flex;
   align-items: center;
@@ -426,7 +431,7 @@ body {
 }
 
 .close {
-  background: #ff5f56;
+  background: var(--close-btn);
 }
 
 .close::after {
@@ -434,7 +439,7 @@ body {
 }
 
 .minimize {
-  background: #ffbd2e;
+  background: var(--minimize-btn);
 }
 
 .minimize::after {
@@ -442,7 +447,7 @@ body {
 }
 
 .maximize {
-  background: #28c940;
+  background: var(--maximize-btn);
 }
 
 .maximize::after {
@@ -463,7 +468,7 @@ body {
 .window-content {
   padding: 16px;
   font-size: 13px;
-  color: #333;
+  color: var(--text-primary);
   height: calc(100% - 28px);
   overflow-y: auto;
   background: var(--mac-window-bg);
@@ -511,7 +516,7 @@ body {
   width: 100%;
   height: 60px;
   object-fit: cover;
-  border: 2px solid #000;
+  border: 2px solid var(--mac-menu-text);
   box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -632,18 +637,18 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #c0c0c0;
+  background: var(--platinum-base);
   border: 1px solid #fff;
   user-select: none;
 }
 
 .paint-menu-bar {
-  background: #c0c0c0;
+  background: var(--platinum-base);
   padding: 2px 10px;
   font-size: 11px;
   display: flex;
   gap: 10px;
-  border-bottom: 1px solid #808080;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .paint-menu-item {
@@ -665,29 +670,29 @@ body {
 
 .paint-toolbar {
   width: 56px;
-  background: #c0c0c0;
+  background: var(--platinum-base);
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-auto-rows: 25px;
   gap: 2px;
   padding: 2px;
-  border-right: 1px solid #808080;
+  border-right: 1px solid var(--border-light);
 }
 
 .paint-tool {
   border: 1px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
+  border-right-color: var(--border-light);
+  border-bottom-color: var(--border-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #c0c0c0;
+  background: var(--platinum-base);
   cursor: pointer;
 }
 
 .paint-tool.active {
   background: #fff;
-  border: 1px solid #808080;
+  border: 1px solid var(--border-light);
   border-right-color: #fff;
   border-bottom-color: #fff;
   box-shadow: inset 1px 1px 1px #000;
@@ -695,7 +700,7 @@ body {
 
 .paint-canvas-area {
   flex: 1;
-  background: #808080;
+  background: var(--platinum-dark);
   padding: 5px;
   overflow: auto;
   display: flex;
@@ -711,8 +716,8 @@ body {
 
 .paint-bottom {
   height: 48px;
-  background: #c0c0c0;
-  border-top: 1px solid #808080;
+  background: var(--platinum-base);
+  border-top: 1px solid var(--border-light);
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -729,7 +734,7 @@ body {
 .paint-color {
   width: 15px;
   height: 15px;
-  border: 1px solid #808080;
+  border: 1px solid var(--border-light);
   cursor: pointer;
 }
 
@@ -737,8 +742,8 @@ body {
   width: 25px;
   height: 25px;
   border: 2px solid #fff;
-  border-right-color: #808080;
-  border-bottom-color: #808080;
+  border-right-color: var(--border-light);
+  border-bottom-color: var(--border-light);
   background: #000;
 }
 
@@ -748,9 +753,9 @@ body {
   gap: 10px;
   margin-left: auto;
   font-size: 11px;
-  background: #c0c0c0;
+  background: var(--platinum-base);
   padding: 2px 8px;
-  border: 1px solid #808080;
+  border: 1px solid var(--border-light);
   box-shadow: inset 1px 1px 1px #fff;
 }
 
@@ -810,7 +815,7 @@ body {
   font-family: 'Inter', sans-serif;
   font-size: 13px;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin-top: 4px;
 }
 
@@ -857,7 +862,7 @@ body {
 .resume-detail {
   font-size: 11px;
   margin: 4px 0;
-  color: #444;
+  color: var(--text-secondary);
 }
 
 .resume-row {
@@ -870,13 +875,13 @@ body {
 .resume-sub {
   font-size: 12px;
   margin-bottom: 4px;
-  color: #444;
+  color: var(--text-secondary);
 }
 
 .resume-list {
   font-size: 11px;
   margin: 3px 0 8px 16px;
-  color: #333;
+  color: var(--text-primary);
   line-height: 1.5;
 }
 
@@ -905,14 +910,14 @@ body {
 
 .research-abstract {
   font-size: 13px;
-  color: #444;
+  color: var(--text-secondary);
   margin-bottom: 10px;
   line-height: 1.6;
 }
 
 .research-keywords {
   font-size: 12px;
-  color: #666;
+  color: var(--text-muted);
   margin-bottom: 10px;
   font-style: italic;
 }
@@ -960,7 +965,7 @@ body {
   font-weight: 600;
   display: block;
   margin-bottom: 4px;
-  color: #444;
+  color: var(--text-secondary);
 }
 
 .contact-input {
@@ -1046,7 +1051,7 @@ body {
   line-height: 1.6;
   font-size: 13px;
   text-align: justify;
-  color: #333;
+  color: var(--text-primary);
 }
 
 /* Empty state */
@@ -1157,7 +1162,7 @@ body {
   display: flex;
   flex-direction: column;
   background: #e5e5e5;
-  border: 2px solid #000;
+  border: 2px solid var(--mac-menu-text);
   border-radius: 12px;
   padding: 20px;
   width: 100%;
@@ -1299,11 +1304,11 @@ body {
 }
 
 .contact-btn-cancel {
-  background: #e8e8e8;
+  background: var(--mac-btn-face);
 }
 
 .contact-btn-cancel:hover {
-  background: #d0d0d0;
+  background: var(--platinum-base);
 }
 
 .contact-status {
@@ -1381,60 +1386,6 @@ body {
 }
 
 /* =============================================
-   Taskbar
-   ============================================= */
-.taskbar {
-  position: absolute;
-  bottom: 105px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  padding: 0 8px;
-  gap: 4px;
-  z-index: 99;
-  min-width: 100px;
-  max-width: 60vw;
-  overflow-x: auto;
-}
-
-.taskbar-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 10px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 5px;
-  color: #fff;
-  font-size: 11px;
-  font-family: 'Inter', sans-serif;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 0.15s;
-  border: none;
-}
-
-.taskbar-item:hover {
-  background: rgba(255, 255, 255, 0.25);
-}
-
-.taskbar-item.active {
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: inset 0 -2px 0 #4a80d4;
-}
-
-.taskbar-item img {
-  width: 16px;
-  height: 16px;
-  object-fit: contain;
-}
-
-/* =============================================
    Dark Mode
    ============================================= */
 .desktop.dark-mode {
@@ -1455,8 +1406,8 @@ body {
 
 .desktop.dark-mode .top-bar {
   background: #222;
-  color: #e0e0e0;
-  border-bottom-color: #444;
+  color: var(--text-on-dark);
+  border-bottom-color: var(--text-secondary);
 }
 
 .desktop.dark-mode .window {
@@ -1559,7 +1510,7 @@ body {
 }
 
 .desktop.dark-mode .search-input {
-  color: #e0e0e0;
+  color: var(--text-on-dark);
 }
 
 .search-results {
@@ -1575,7 +1526,7 @@ body {
   align-items: center;
   gap: 10px;
   font-size: 13px;
-  color: #333;
+  color: var(--text-primary);
   transition: background 0.1s;
 }
 
@@ -1669,8 +1620,8 @@ body {
   color: #000;
 }
 
-.desktop.dark-mode .blog-post h3 { color: #e0e0e0; }
-.desktop.dark-mode .blog-post { border-bottom-color: #444; }
+.desktop.dark-mode .blog-post h3 { color: var(--text-on-dark); }
+.desktop.dark-mode .blog-post { border-bottom-color: var(--text-secondary); }
 
 .blog-post .blog-meta {
   font-size: 11px;
