@@ -22,10 +22,6 @@ export function openMenuWindow() {
 
     // Add extra apps not in Dock
     html += `
-        <div class="menu-app-item" data-id="snake">
-            <img src="./img/flappy-bird_img.png" />
-            <span>Snake</span>
-        </div>
         <div class="menu-app-item" data-id="calculator">
             <img src="./img/Calculator_img.jpg" />
             <span>Calculator</span>

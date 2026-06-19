@@ -2,7 +2,6 @@ import { createWindow } from './window-manager';
 import { openTerminal } from './apps/terminal';
 import { openPaint } from './apps/paint';
 import { openFlappyBird } from './apps/flappy-bird';
-import { openSnake } from './apps/snake';
 import { openCalculator } from './apps/calculator';
 import { openContactForm } from './apps/contact';
 import { openMenuWindow } from './apps/menu';
@@ -393,11 +392,6 @@ function setupDockHandlers() {
 
             if (id === 'flappy-bird') {
                 openFlappyBird();
-                return;
-            }
-
-            if (id === 'snake') {
-                openSnake();
                 return;
             }
 
