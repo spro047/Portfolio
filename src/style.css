@@ -613,6 +613,14 @@ body {
   font-size: 14px;
 }
 
+.snake-game-icon {
+  width: 64px;
+  height: 64px;
+  display: block;
+  margin: 0 auto 8px;
+  image-rendering: pixelated;
+}
+
 .score-display {
   position: absolute;
   top: 10px;

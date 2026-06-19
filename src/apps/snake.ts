@@ -15,6 +15,7 @@ export function openSnake() {
             <canvas id="snake-canvas" width="${CANVAS_SIZE}" height="${CANVAS_SIZE}"></canvas>
             <div id="snake-overlay" class="game-overlay">
                 <div id="snake-start-screen">
+                    <img src="./img/snake.png" class="snake-game-icon" alt="Snake" />
                     <h2 id="snake-status">SNAKE</h2>
                     <p>Use ARROW KEYS to move</p>
                 </div>
