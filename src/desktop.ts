@@ -5,7 +5,6 @@ import { openFlappyBird } from './apps/flappy-bird';
 import { openCalculator } from './apps/calculator';
 import { openContactForm } from './apps/contact';
 import { openMenuWindow } from './apps/menu';
-import { openBlog } from './apps/blog';
 import { openFilesWindow, openProjectsFolder } from './apps/files';
 
 // DOM Refs
@@ -265,7 +264,7 @@ function handleSearchAction(action: string) {
     } else if (action === 'calculator') {
         openCalculator();
     } else if (action === 'blog') {
-        openBlog();
+        openProjectsFolder();
     }
 }
 
@@ -405,8 +404,8 @@ function setupDockHandlers() {
                 return;
             }
 
-            if (id === 'blog') {
-                openBlog();
+            if (id === 'projects') {
+                openProjectsFolder();
                 return;
             }
 
