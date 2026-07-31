@@ -1,0 +1,56 @@
+﻿Shashank Shetgeri 
+shashankshetgeri@gmail.com | 9480128298 | LinkedIn | GitHub | Belgaum, Karnataka 
+INTRODUCTION 
+Computer Science Engineering student with hands-on experience in Web Designing, Artificial Intelligence, and Machine 
+Learning through internships, projects, and research publications. Skilled in C/C++, with experience in developing 
+responsive web applications and AI-driven healthcare solutions. Passionate about building scalable, high-impact systems 
+and applying modern technologies to solve real-world problems. 
+SKILLS 
+Languages: C/C++ Programing   
+Web Tools: Elementor , Wix 
+DevOps & Cloud: Docker, AWS, Git, GitHub 
+Databases: MongoDB 
+INTERNSHIPS 
+Technology Intern, Webrook ΓÇô RemoteΓÇï
+         Jun 2025 ΓÇô Aug 2025 
+Designed and optimized responsive websites using Elementor and Wix, enhancing user experience across desktop and 
+mobile platforms.  
+Software Intern, Eyesec Cyber Security Solutions Pvt. Ltd. ΓÇô BelagaviΓÇï
+         Jan 2024 ΓÇô Apr 2024 
+Gained hands-on experience in cybersecurity by identifying security vulnerabilities and applying secure software 
+development practices.  
+Student Intern, Eyesec Cyber Security Solutions Pvt. Ltd. ΓÇô BelagaviΓÇï
+         Jan 2023 ΓÇô Jul 2023 
+Worked on  Full Stack Development technologies. Assisted in developing and testing applications while gaining practical 
+exposure to real-world project workflows. 
+PROJECTS 
+Gender-Aware ADHD Detection Framework Using XGBoost and FLAML                                                    WiDS Datathon 2025  
+Developed a dual-model ADHD prediction framework using XGBoost and FLAML, achieving AUC scores of 0.77 for gender 
+classification and 0.84 for ADHD prediction, leading to an MDPI research publication.  
+Alzheimer's Disease Detection Using Deep Learning 
+Developed and evaluated CNN, VGG16, ResNet50, DenseNet201, InceptionV3, and EfficientNet-B1 models for multi-class 
+Alzheimer's disease classification using brain MRI scans.  
+Knowledge Graph-Based Generative AI Assistant 
+Built a Knowledge Graph-based RAG assistant to enhance contextual information retrieval and improve the relevance of 
+AI-generated responses.  
+Inventory Management System 
+Developed and containerized an inventory management system using Docker and AWS, enabling scalable deployment and 
+streamlined application management.  
+EDUCATION 
+KLE Technological University, Dr. M. S. Sheshgiri Campus 
+Bachelor of Engineering (B.E.) in Computer Science and Engineering 
+2024 ΓÇô 2027
+KLS Shri Vasantro Polytechnic 
+Diploma in Computer Science and Engineering 
+2021 ΓÇô 2024
+PUBLICATIONS & ACHIEVEMENT 
+Gender-Aware ADHD Detection Framework Combining XGBoost and FLAML Models 
+Comput. Sci. Math. Forum (MDPI), 2025  
+Published research on ADHD prediction using XGBoost, FLAML with multi-modal data fusion.  
+Comparative Deep Neural Study For Stage-Wise AlzheimerΓÇÖs Disease Detection Using Brain MRI 
+Paper Accepted / Publication Pending 
+Conducted a comparative analysis of CNN, VGG16, ResNet50, DenseNet201, InceptionV3, and EfficientNet-B1 models for 
+Alzheimer's stage classification using MRI scans.  
+ΓÇó Won 1st Place in Best DevOps Project Competition.  
+ΓÇó Solved 100+ DSA problems on LeetCode. 
+
